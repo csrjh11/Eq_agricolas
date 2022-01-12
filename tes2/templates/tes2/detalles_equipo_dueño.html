@@ -1,0 +1,125 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="row center">
+    <h2>Equipo # {{equipo.num_equipo}}</h2>    
+  </div>
+  <div class="row l-g">
+    <div class="col-6">
+      <span class = "center">
+        <h2>Datos Generales</h2>
+      </span>
+      <form id = "generales" method="POST">{% csrf_token %}
+        <p>
+          <label for="id_nombre_equipo">Nombre del Equipo:</label>
+          <input type="text" name="nombre_equipo" value="{{equipo.nombre_equipo|title}}" class="form-control" maxlength="100" required="" id="id_nombre_equipo" disabled>
+        </p>
+        <p>
+          <label for="id_tipo_equipo">Tipo de equipo:</label>
+          <select name="tipo_equipo" class="form-control" required="" id="id_tipo_equipo" disabled>
+          <option value = {{equipo.tipo_equipo}}>{{equipo.tipo_equipo|title}}</option>
+          </select>
+        </p>
+        <p>
+          <label for="id_descripcion">Descripcion:</label>
+          <textarea name="descripcion" cols="40" rows="5" class="form-control" maxlength="200" required="" id="id_descripcion"   disabled>{{equipo.descripcion|capfirst}}</textarea> 
+        </p>
+        <div class="row">
+          <div class="col-6">
+            <p id = "contenedor-marca">
+              <label for="id_marca">Marca:</label>
+              <select name="marca" class="form-control" id="id_marca" disabled>
+                <option  selected value = "{{equipo.marca}}">{{equipo.marca}}</option>
+              </select>
+            </p>
+            <p class="hidden">
+              <label for="otra-marca">Escriba el nombre de la Marca</label>
+              <input type="text" id="otra-marca" class="form-control">
+            </p>
+          </div>
+          <div class="col-6">
+            <p  id = "contenedor-modelo">
+              <label for="id_modelo">Modelo:</label>
+              <select name="modelo" class="form-control" id="id_modelo" disabled>
+                <option selected value = "{{equipo.modelo}}">{{equipo.modelo}}</option>
+              </select>
+            </p>
+            <p class="hidden">
+              <label for="otra-modelo">Escriba el nombre del Modelo</label>
+              <input type="text" id="otro-modelo" class="form-control">
+            </p>
+          </div>
+        </div>
+        <div class="row misma-altura">
+          <div class="col-6">
+            <p>
+              <label for="id_año">Año:</label>
+              <input type="number" name="año" value={{equipo.año}} class="form-control" min="1930" max="2023" required="" id="id_año" disabled>
+            </p>
+          </div>
+          <div class="col-6">
+            <p>
+              <label for="id_estado_equipo">Estado del equipo:</label>
+              <select name="estado_equipo" class="form-control" required="" id="id_estado_equipo" disabled>
+                <option value = "{{equipo.estado_equipo}}"selected>{{equipo.estado_equipo|title}}</option>
+              </select>
+          </p>
+          </div>
+        </div>
+        <p>
+          <label for="id_has">Hectáreas que trabaja en promedio (Cada ciclo):</label>
+          <input type="number" name="hecatreas_trabajadas" value={{equipo.hecatreas_trabajadas}} class="form-control"  required="" id="id_has" disabled>
+        </p> 
+        <p>
+          <label for="id_donde_esta">Ubicación Base del Equipo</label>
+          <select name="donde_esta" class="form-control" required="" id="id_donde_esta" disabled>
+            <option  value = "{{equipo.donde_esta}}" selected>{{equipo.donde_esta.alias}} ({{equipo.donde_esta.municipio}}, {{equipo.donde_esta.estado}})</option>
+          </select>
+        </p>
+        <p>
+          <label for="id_para_que">Para que:</label>
+          <select name="para_que" class="form-control" required="" id="id_para_que" disabled>
+            <option value="venta" {% if equipo.para_que == "venta" %} selected {% endif %} >Venta</option>          
+            <option value="renta" {% if equipo.para_que == "renta" %} selected {% endif %} >Renta</option>          
+            <option value="ambos" {% if equipo.para_que == "ambos" %} selected {% endif %} >Ambos</option>          
+          </select>
+        </p>
+        <div class="row">
+          <div class="col-6">
+            <p>
+              <label for="id_precio_venta">Precio de venta (MXN):</label>
+              <input type="number" name="precio_venta" value="{{equipo.precio_venta}}" class="form-control" min="0" step="any" required="" id="id_precio_venta" disabled>
+            </p>
+          </div>
+          <div class="col-6">
+            <p>
+              <label for="id_precio_renta_dia">Precio de renta/dia (MXN):</label>
+              <input type="number" name="precio_renta_dia" value = "{{equipo.precio_renta_dia}}" class="form-control" min="0" step="any" required="" id="id_precio_renta_dia" disabled>
+            </p>
+          </div>
+        </div>
+        <div class="derecha">
+          <button class="btn" type="button" id = "btn-alias">
+              Editar Datos Generales
+              <i class="fa  fa-pencil-square-o" aria-hidden="true"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="col-6">
+      <span class = "center">
+        <h2>Datos Especificos</h2>
+      </span>
+      <form id = "especificos" method="POST">{% csrf_token %}
+        {{forma.as_p}}
+      </form>
+      <img  class = "fit-vista" alt= "Imagen" src = "{{ img.first.imageURL }}">
+
+    </div>
+  </div>
+
+{% endblock content %}

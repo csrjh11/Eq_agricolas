@@ -1,0 +1,50 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+
+{% block content %}
+<div class="container" >
+    <div class="row">
+        <div class="col-4 brd mx-1 center">
+            <h1>Equipo</h1>
+            <h2>{{sol.id_equipo.nombre_equipo|capfirst}}</h2>
+            <hr>
+            <h1>Usuario Interesado</h1>
+            <h2>{{sol.id_solicitante.nombre|capfirst}} {{notif.id_solicitante.apellido_1|capfirst}} {{notif.id_solicitante.apellido_2|capfirst}}</h2>
+            <hr>
+            <h2>Información de ubicaciones</h2>
+            <br>
+            <h3>1 - Ubicación del Equipo </h3>
+            <h4>{{sol.desde_donde}}</h4>
+            <h3>2 - Destino del Equipo </h3>
+            <h4>{{sol.a_donde.municipio}}, {{trn.a_donde.estado}} </h4>
+        </div>
+        <div class="col-4 brd mx-1 p-1">
+            <img class= "mapa-img" src = "https://maps.googleapis.com/maps/api/staticmap?&size=496x496&maptype=roadmap
+            &markers=color:red%7Clabel:1%7C{{sol.desde_donde.coord_x}},{{sol.desde_donde.coord_y}}&markers=color:green%7Clabel:2%7C{{sol.a_donde.coord_x}},{{sol.a_donde.coord_y}}
+            &key=AIzaSyA6BgqA2oKejfHVnFodwFPmIDJZDIH6YeE">
+        </div>
+        <div class="col-3 brd mx-1">
+            <h1>Fecha de inicio</h1>
+            <h2>{{sol.fecha_inicio|date:"d/m/Y"}}</h2>
+            <hr>
+            <br>
+            <h1>Fecha final</h1>
+            <h2>{{sol.fecha_final|date:"d/m/Y"}}</h2>
+            <hr>
+            <br>
+            <div class="botones">
+                <form class = "form" method = "POST" id = "forma-SN"> {% csrf_token %}
+                    <input type="hidden" value name = "wwmd" id = "wwmd">
+                </form>
+                <button class = "btn btn-primary b-acp">Aceptar</button>
+                <button class = "btn btn-danger b-rec">Rechazar</button>
+            </div>
+        </div>
+    </div>
+    <div class="row center">
+    </div>
+</div>
+
+<script type="text/javascript" src="{%static 'js/n_es.js'%}"></script>
+
+{% endblock content %}

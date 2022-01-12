@@ -1,0 +1,98 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <form method="POST">{% csrf_token %}
+        <p>
+          <label for="id_nombre_equipo">Nombre equipo:</label>
+          <input type="text" name="nombre_equipo" value="" class="form-control" maxlength="100" required="" id="id_nombre_equipo">
+        </p>
+        <p>
+          <label for="id_tipo_equipo">Tipo equipo:</label>
+          <select name="tipo_equipo" class="form-control" required="" id="id_tipo_equipo">
+          <option  disabled selected>Seleccione una opción</option>
+          </select>
+        </p>
+        <p>
+          <label for="id_descripcion">Descripcion:</label>
+          <textarea name="descripcion" cols="40" rows="10" class="form-control" maxlength="200" required="" id="id_descripcion"></textarea>
+        </p>
+        <p class="hidden" id = "contenedor-marca">
+          <label for="id_marca">Marca:</label>
+          <select name="marca" class="form-control" id="id_marca">
+            <option  disabled selected>Seleccione una opción</option>
+          </select>
+        </p>
+        <p class="hidden">
+          <label for="otra-marca">Escriba el nombre de la Marca</label>
+          <input type="text" id="otra-marca" class="form-control">
+        </p>
+        <p class="hidden" id = "contenedor-modelo">
+          <label for="id_modelo">Modelo:</label>
+          <select name="modelo" class="form-control" id="id_modelo">
+          </select>
+        </p>
+        <p>
+          <label for="id_año">Año:</label>
+          <input type="number" name="año" value="" class="form-control" min="1930" max="2023" required="" id="id_año">
+        </p>
+        <p>
+          <label for="id_has">Hectáreas que trabaja en promedio (Cada ciclo):</label>
+          <input type="number" name="hecatreas_trabajadas" value="" class="form-control"  required="" id="id_has">
+        </p>
+        <p>
+          <label for="id_estado_equipo">Estado equipo:</label>
+          <select name="estado_equipo" class="form-control" required="" id="id_estado_equipo">
+            <option  disabled selected>Seleccione una opción</option>
+            <option value="malo">Malo</option>          
+            <option value="regular">Regular</option>          
+            <option value="buena">Buena</option>          
+            <option value="excelente">Excelente</option>          
+          </select>
+        </p>
+        <p>
+          <label for="id_donde_esta">Donde esta:</label>
+          <select name="donde_esta" class="form-control" required="" id="id_donde_esta">
+            <option  disabled selected>Seleccione una opción</option>
+            {% for ub in ubicaciones %}
+            <option value = {{ub.id_ubicacion}}>{{ub.alias}}</option>
+            {% endfor %}
+
+          </select>
+        </p>
+        <p>
+          <label for="id_para_que">Para que:</label>
+          <select name="para_que" class="form-control" required="" id="id_para_que">
+            <option  disabled selected>Seleccione una opción</option>
+            <option value="venta">Venta</option>          
+            <option value="renta">Renta</option>          
+            <option value="ambos">Ambos</option>          
+          </select>
+        </p>
+        <p class="hidden">
+          <label for="id_precio_venta">Precio venta:</label>
+          <input type="number" name="precio_venta" value="" class="form-control" min="0" step="any" required="" id="id_precio_venta">
+        </p>
+        <p class="hidden">
+          <label for="id_precio_renta_dia">Precio renta dia:</label>
+          <input type="number" name="precio_renta_dia" value="" class="form-control" min="0" step="any" required="" id="id_precio_renta_dia">
+        </p>
+
+        <div class="derecha">
+          <button type = "submit" class = "btn btn-secondary" id = "next1">Siguiente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript" src="{%static 'js/nuevo_equipo.js'%}"></script>
+
+{% endblock content %}
+
+
+

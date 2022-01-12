@@ -1,0 +1,127 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+{% block links%}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+crossorigin=""></script>
+
+{% endblock links %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-4 brd">
+            <form class = "form" method = "POST" id = "form-aref">{% csrf_token %}
+                <input type="hidden" value = {{ubicacion.coord_x}} name = "coord_x", id = "coord_x">
+                <input type="hidden" value = {{ubicacion.coord_y}} name = "coord_y", id = "coord_y">
+                <input type="hidden" name = "municipio" value =  {{ubicacion.municipio}} class = "form-control"  id = "id-municipio">
+                <input type="hidden" name = "estado" value = {{ubicacion.estado}} class = "form-control"  id = "id-estado">
+                <div class="fieldWrapper">
+                    {{ form.alias.errors }}
+                    <h2>{{ form.alias.label_tag }}</h2>
+                    {{ form.alias }}
+                    <span style="float: right;">
+                        <button class="btn" type="button" id = "btn-alias">
+                            <i class="fa  fa-pencil-square-o" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+                <br>
+                <div class="fieldWrapper">
+                    {{ form.referencias.errors }}
+                    <h2>{{ form.referencias.label_tag }}</h2>
+                    {{ form.referencias }}
+                    <span style="float: right;">
+                        <button class="btn" type="button" id = "btn-ref">
+                            <i class="fa  fa-pencil-square-o" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+                <br><br>
+                <div style="float: right; display: inline;" class="my-1 hidden" id = "div-go">
+                    <button class="btn btn-primary" type="button" id = "btn-go">
+                        Guardar Cambios
+                    </button>
+                    <button class="btn btn-secondary" type="button" id = "btn-nel">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-5 brd">
+            <span style="display: inline;">
+                <h2>Localización</h2>
+                <button class="btn" type="button" id = "btn-ub" style="float: right;">
+                    <i class="fa  fa-pencil-square-o" aria-hidden="true"></i>
+                </button>
+            </span>            
+            <h4>Municipio: </h4>
+            <input type="text" name = "mnc", value = "{{ubicacion.municipio}}" class = "form-control" disabled>
+            <h4>Estado:</h4>
+            <input type="text" name = "edo", value = "{{ubicacion.estado}}" class = "form-control" disabled>
+            <br>
+            <div class="center my-2">
+                <img class = "img-ajustada" src = "https://maps.googleapis.com/maps/api/staticmap?&zoom=10&size=496x496&maptype=roadmap
+                &markers=color:red%7Clabel:1%7C{{ubicacion.coord_x}},{{ubicacion.coord_y}}&key=AIzaSyA6BgqA2oKejfHVnFodwFPmIDJZDIH6YeE">
+            </div>
+        </div>
+    </div>
+    <div style = "float: right; display: inline;">
+        <button class="btn btn-danger" id = "drZ">
+            <i class="fa fa-trash-o fa-lg"></i> Eliminar
+        </button>
+    </div>
+</div>
+<div class="overlay hidden">
+    <div class="el-modal">
+        <div id = "map-mod"></div>
+        <div style="float: right; display: inline;" class="my-1">
+            <button class="btn btn-primary" type="button" id = "btn-go-mapa">
+                Guardar Cambios
+            </button>
+            <button class="btn btn-secondary" type="button" id = "btn-nel-mapa">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+{% if messages %}x
+   <script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+   </script>
+{% endif %}
+
+<script type="text/javascript" src="{%static 'js/ub_esp.js'%}"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}

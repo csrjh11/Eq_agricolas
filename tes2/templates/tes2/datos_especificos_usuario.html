@@ -1,0 +1,16 @@
+{% extends "tes2/main.html" %}
+
+
+{% block content %}
+
+<form class = "form" method = "POST"> {% csrf_token %}
+{{form.as_p}}
+
+<button type ="submit" id = "sbubmit">Ingresar</button>
+
+</form>
+
+
+
+{% endblock content %}
+

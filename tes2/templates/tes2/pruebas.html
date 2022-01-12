@@ -1,0 +1,54 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+
+{% block content %}
+<form class = "form" method = "POST" id = "forma-datos"> {% csrf_token %}
+    <input type="hidden" value = "" name = "datos" id ="datos">
+</form>
+
+<button id = "asigna">Dale</button>
+
+<script type="text/javascript">
+    const listaMun = []
+
+    const lasUb = {{ubicacion}}
+
+
+    const datos_dir= async function(ubicacion){
+        const llAPI = "AIzaSyA6BgqA2oKejfHVnFodwFPmIDJZDIH6YeE"
+        const respo = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${ubicacion}&key=${llAPI}`)
+        const jsonR = await respo.json()
+        console.log(jsonR)
+        let elIndex = jsonR.results.map( res => res.types).findIndex(areg => areg.includes("administrative_area_level_2"))
+        console.log(elIndex)
+        if (elIndex == -1){
+            elIndex = jsonR.results.map( res => res.types).findIndex(areg => areg.includes("administrative_area_level_3"))
+        }
+        const municipio = jsonR.results[elIndex].address_components[0].long_name
+        const estado = jsonR.results[elIndex].address_components[1].long_name
+        listaMun.push([municipio, estado])
+
+        console.log(municipio, estado)
+    }
+
+    lasUb.forEach( ub => {
+        datos_dir(ub)
+        console.log(listaMun)
+    })
+
+    const boton = document.getElementById("asigna");
+    const forma = document.getElementById("forma-datos")
+    const datos = document.getElementById("datos")
+
+    boton.addEventListener("click", function(){
+        datos.value = listaMun;
+        forma.submit()
+    })
+
+
+</script>
+
+
+
+
+{% endblock content %}

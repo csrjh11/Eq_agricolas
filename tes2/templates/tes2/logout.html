@@ -1,0 +1,19 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Sesión cerrada satisfactoriamente</h1>
+
+<script type="text/javascript">
+
+    const timerRedirect = function(time){
+        setTimeout(function(){
+            window.location.replace("/")
+        }, time)
+    }
+    
+    timerRedirect(2500)
+    </script>
+
+{% endblock content %}
+

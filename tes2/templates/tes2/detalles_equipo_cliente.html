@@ -1,0 +1,71 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+
+{% block content %}
+<input type = "hidden" id = "num-eq" value = "{{equipo.num_equipo}}">
+<input type = "hidden" id = "usr" value = "{{user}}">
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <img  class = "fit-vista"alt= "Imagen" src = "{{ imagenes.first.imageURL }}">
+    </div>
+    <div class="col-4 brd mx-1">
+        <h1>{{equipo.que_es}} {{equipo.marca}} {{equipo.modelo}}</h1>
+        <hr>
+        <h3>Año: {{equipo.año}}</h3>
+        <h4>{{equipo.descripcion}}</h4>
+        <hr>
+        <h3>Ubicación</h3>
+        <h4>{{equipo.donde_esta.municipio}}, {{equipo.donde_esta.estado}}</h4>
+    </div>
+    <div class="col brd">
+      {%if equipo.para_que == "ambos"%}
+          <h4>Precio de Venta:</h4>
+          <h4>${{equipo.precio_venta}}</h4>
+          <br>
+          <h4>Precio de Renta:</h4>
+          <h4>${{equipo.precio_renta_dia}}</h4><br>
+          <div class = "boton-cv">
+              <btn id = "b-renta" class="btn btn-outline-secondary mb-2">Rentar</btn>
+              <btn id = "b-compra" class="btn btn-outline-secondary mb-2">Comprar</btn>
+          </div>
+      {%elif equipo.para_que == "venta"%}
+        <h4>Precio de Venta:</h4>
+        <h4>${{equipo.precio_venta}}</h4>
+        <br>
+        <div class = "boton-cv">
+          <btn id = "b-compra" class="btn btn-outline-secondary">Comprar</btn>
+        </div>
+      {%else%}
+        <h4>Precio de Renta:</h4>
+        <h4>${{equipo.precio_renta_dia}}</h4>
+        <br>
+        <div class = "boton-cv">
+          <btn id = "b-renta" class="btn btn-outline-secondary mb-2">Rentar</btn>
+        </div>
+      {% endif%}
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Advertenica</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body center">
+        <p>Por favor inicie sesión para continuar</p>
+      </div>
+      <div class="modal-footer center">
+        <a class="btn btn-primary" href = "/login">Iniciar Sesión</a>
+        <a class="btn btn-secondary" href = "/registro" >Crear Cuenta</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{%static 'js/detalles_equipo.js'%}"></script>
+{% endblock content %}

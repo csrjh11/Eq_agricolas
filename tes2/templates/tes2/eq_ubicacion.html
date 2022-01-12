@@ -1,0 +1,55 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+
+{% block content %}
+<div class="container">
+    <div class="row center my-2">
+        <h2>Equipos en {{ubicacion.alias}}</h2>
+    </div>
+    <div class="row">
+        <div class = "col-8 center">
+            <form class = "form" method = "POST" id = "forma-princ">     {%csrf_token%}
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Nueva Ubicación</th>
+                    </tr>
+                    </thead>
+                    <tbody id = "num">
+                    {% for eq in equipos %}
+                    <tr>  
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{eq.nombre_equipo|capfirst}}</td>
+                        <td>
+                            <select id = "op-ub" required class = "form-control" name = "ubicacion-{{eq.num_equipo}}">
+                                <option value selected>------------</option>
+                                {% for ub in opciones %}
+                                <option>{{ub.alias}}</option>                        
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+            <div class="b-rec">
+                <button class="btn btn-primary" id = "btn-si">Aceptar</button>
+                <button class="btn btn-danger" id = "btn-no">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% if messages %}x
+   <script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+   </script>
+{% endif %}
+
+<script type="text/javascript" src="{%static 'js/cambio_ub_eq.js'%}"></script>
+
+{% endblock content %}

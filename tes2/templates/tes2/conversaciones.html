@@ -1,0 +1,41 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+
+{% block content %}
+<div class="container" >
+    <div class="row">
+        <div class="col-4 convo m-1 overflow-auto">
+            <form class="form my-2">
+                <input type="hidden" value="{{id_us}}" id = "elaidi">
+                <input class="form-control" type="search" placeholder="Buscar" aria-label="Search">
+                <button class="btn btn-outline-success my-1 der_elemento" type="submit">Buscar</button>
+            </form>
+            <br>
+            <hr>
+            {% if conver == "na" %}
+                <h3 class="center">No hay conversaciones</h3>
+            {% else %}
+                {% for cn in conver %}
+                    <div class="brd center" id = "con-m">
+                        <button id = "{{cn.id_conversacion}}">{{cn.id_transaccion.id_equipo}}</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="col convo m-1 overflow-auto">
+            <div class="imessage" id = "msjs"></div>
+            <div class="nuevo-m hidden">
+                <form class = "form fnm"> {% csrf_token %}
+                    <input type = "text" placeholder="..." id = "btn-txt">
+                    <button class="btn btn-send" type="submit">
+                        <img src="{%static 'images/send.png'%}" id = "img-send">
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src = "{%static 'js/conversaciones.js' %}"></script>
+{% endblock content %}

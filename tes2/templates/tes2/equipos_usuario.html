@@ -1,0 +1,90 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<h1 style = text-align:center >Mis Equipos</h1>
+
+
+
+<div class = "container">
+  <div class = "row">
+    <!-- <div class = "col-3">
+      <form>
+        <label for="tipo_maq" >Tipo de equipo</label>
+        <select name = "tipo_maq" id = "tipo_maq">
+            <option value = "">----</option>
+            <option value = "tractor">Tractor</option>
+            <option value = "arado">Arado</option>
+            <option value = "otros">Otros</option>
+        </select>
+        <br>
+        <label for="modelo" >Año del equipo</label>
+        <select name = "modelo" id = "modelo">
+            <option value = "">----</option>
+        </select>
+        <input type = "submit" value = "Submit">
+      </form>
+    </div> -->
+    <div class = "col">
+      <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Número</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Estatus</th>
+              <th scope="col">Ubicación</th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody id = "num">
+          {% for eq in equipo %}
+            <tr>  
+              <th scope="row" >{{ forloop.counter }}</th>
+              <td>{{eq.nombre_equipo}}</td>
+              <td id = "tipo">{{eq.tipo_equipo|capfirst}}</td>
+              <td id = "status">{{eq.status|capfirst}}</td>
+              <td>{{eq.donde_esta}}</td>
+              <td> 
+                  <a class = "btn btn-outline-success" href="/mi_cuenta/equipos/{{eq.num_equipo}}">Más Información</a>
+              </td>
+              <td >
+                <button id = "btn-el" class="btn btn-danger">
+                    <input type="hidden" value="{{eq.num_equipo}}">
+                    <i class="fa fa-trash-o fa-lg"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <div class="b-rec">
+          <a class="btn btn-success" href="/registro_equipo">Nuevo Equipo</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  const btnB = document.querySelectorAll("#btn-el");
+  btnB.forEach(bt => bt.addEventListener("click", function(){
+      nombre = this.parentNode.parentNode.firstElementChild.nextElementSibling.innerHTML
+      aidi = this.firstElementChild.value
+      if(confirm(`Eliminar el equipo ${nombre}?`)){
+          window.location.replace(`/mi_cuenta/equipos/${aidi}/eliminar`)
+      }
+  }))
+</script>
+  
+  {% if messages %}
+     <script>
+      {% for message in messages %}
+          alert("{{ message }}");
+      {% endfor %}
+     </script>
+  {% endif %}
+
+
+{% endblock content %}

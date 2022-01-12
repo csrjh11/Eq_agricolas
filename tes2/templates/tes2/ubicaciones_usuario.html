@@ -1,0 +1,75 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+
+{% block content %}
+<div class="container">
+    <div class="row center my-2">
+        <h2>Mis ubicaciones</h2>
+    </div>
+    <div class="row">
+        <div class = "col-8 center">
+            {% if ubicacion  == "na" %}
+            <h1>Aún no tienes ubicaciones registradas</h1>
+            <button class="btn btn-primary"><a href = "/registro_equipo" >Registro de Equipo</a></button>
+            {% else %}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Alias</th>
+                    <th scope="col">Municipio</th>
+                    <th scope="col">Estado</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id = "num">
+                {% for ub in ubicacion %}
+                <tr>  
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ub.alias|capfirst}}</td>
+                    <td>{{ub.municipio}}</td>
+                    <td>{{ub.estado}}</td>
+                    <td style="width:20%;"> 
+                        <a class = "btn btn-outline-success" href="/mi_cuenta/ubicaciones/{{ub.id_ubicacion}}">Más Información</a>
+                    </td>
+                    <td >
+                        <button id = "btn-el" class="btn btn-danger">
+                            <input type="hidden" value="{{ub.id_ubicacion}}">
+                            <i class="fa fa-trash-o fa-lg"></i> Eliminar
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            <div class="b-rec">
+                <a class="btn btn-success" href="/registro_ubicacion">Nueva Ubicación</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+const btnB = document.querySelectorAll("#btn-el");
+btnB.forEach(bt => bt.addEventListener("click", function(){
+    nombre = this.parentNode.parentNode.firstElementChild.nextElementSibling.innerHTML
+    aidi = this.firstElementChild.value
+    if(confirm("Eliminar la ubicación {{ub.alias}}?")){
+        window.location.replace(`/mi_cuenta/ubicaciones/${aidi}/eliminar`)
+    }
+}))
+</script>
+
+{% if messages %}
+   <script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+   </script>
+{% endif %}
+
+
+
+
+{% endblock content %}

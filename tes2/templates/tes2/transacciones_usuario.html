@@ -1,0 +1,163 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+
+{% block content %}
+<div class="container my-3">
+    <div class="row justify-content-start">
+        <div class = "col-2">
+            <div class="card-header mb-0 center" id = "bo1">
+                <button class="btn" id = "uno">
+                    Equipos Rentados
+                </button>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="card-header mb-0 center" id = "bo2">
+                <button class="btn" id = "dos">
+                    Equipos en Renta
+                </button>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="card-header mb-0 center" id = "bo3">
+                <button class="btn" id = "tres">
+                    Equipos Comprados
+                </button>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="card-header mb-0 center" id = "bo4">
+                <button class="btn" id = "cuatro">
+                    Equipos Vendidos
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class = "card-body hidden center" id = "txt-uno">
+            {% if tr_renta == "nh"%}
+            <h1>No hay rentas de equipo activas</h1>
+            {%else%}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Dueño</th>
+                    <th scope="col">Equipo</th>
+                    <th scope="col">Fechas</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id = "num">
+                {% for trnsc in tr_renta %}
+                <tr>  
+                    <td>{{trnsc.id_dueño}}</td>
+                    <td>{{trnsc.id_equipo}}</td>
+                    <td>{{trnsc.fecha_inicial|date:"d/m/Y"}} - {{trnsc.fecha_final|date:"d/m/Y"}}</td>
+                    <td> 
+                        <a class = "btn btn-outline-success" href="mis_tr/{{trnsc.id_transaccion}}">Más Información</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+        <div class = "card-body hidden center" id = "txt-dos">
+            {% if tr_mias == "nh"%}
+            <h1>Ninguno de sus equipos está en renta</h1>
+            {%else%}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Arrendador</th>
+                    <th scope="col">Equipo</th>
+                    <th scope="col">Fechas</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id = "num">
+                {% for trnsc in tr_mias %}
+                <tr>  
+                    <td>{{trnsc.id_arrendatario}}</td>
+                    <td>{{trnsc.id_equipo}}</td>
+                    <td>{{trnsc.fecha_inicial|date:"d/m/Y"}} - {{trnsc.fecha_final|date:"d/m/Y"}}</td>
+                    <td> 
+                        <a class = "btn btn-outline-success" href="mis_tr/{{trnsc.id_transaccion}}">Más Información</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+        <div class = "card-body hidden center" id = "txt-tres">
+            <p>No hay, es prueba</p>
+            <!-- {% if tr_renta == "nh"%}
+            <h1>No hay rentas de equipo activas</h1>
+            {%else%}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Dueño</th>
+                    <th scope="col">Equipo</th>
+                    <th scope="col">Fechas</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id = "num">
+                {% for trnsc in tr_renta %}
+                <tr>  
+                    <td>{{trnsc.id_dueño}}</td>
+                    <td>{{trnsc.id_equipo}}</td>
+                    <td>{{trnsc.fecha_inicial|date:"d/m/Y"}} - {{trnsc.fecha_final|date:"d/m/Y"}}</td>
+                    <td> 
+                        <a class = "btn btn-outline-success" href="mis_tr/{{trnsc.id_transaccion}}">Más Información</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %} -->
+        </div>
+        <div class = "card-body hidden center" id = "txt-cuatro">
+            <p>No hay, es prueba</p>
+            <!-- {% if tr_renta == "nh"%}
+            <h1>No hay rentas de equipo activas</h1>
+            {%else%}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Dueño</th>
+                    <th scope="col">Equipo</th>
+                    <th scope="col">Fechas</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id = "num">
+                {% for trnsc in tr_renta %}
+                <tr>  
+                    <td>{{trnsc.id_dueño}}</td>
+                    <td>{{trnsc.id_equipo}}</td>
+                    <td>{{trnsc.fecha_inicial|date:"d/m/Y"}} - {{trnsc.fecha_final|date:"d/m/Y"}}</td>
+                    <td> 
+                        <a class = "btn btn-outline-success" href="mis_tr/{{trnsc.id_transaccion}}">Más Información</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %} -->
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src = "{%static 'js/contratos.js' %}"></script>
+
+
+
+
+
+
+
+
+{% endblock content %}

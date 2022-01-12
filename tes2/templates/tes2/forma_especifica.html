@@ -1,0 +1,36 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+
+
+
+
+
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class = "col-3">
+            <form class = "form" method = "POST" id = "forma-datos" enctype="multipart/form-data"> {% csrf_token %}
+                {{forma.as_p}}
+                <input required id = "imgs" name="images" type = "file" multiple>
+            </form>
+            <div class="derecha">
+                <input  type="button" value="Ingresar" onclick="submitForms()"/>
+            </div>
+        </div>
+        <div class="col brd">
+            <div class = "row" id ="img-row">
+                <span class = "center">Previsualización de Imágenes</span>
+                <br>
+            </div>           
+        </div>
+    </div>
+</div>
+
+
+
+<script src="{%static 'js/forma_especifica.js'%}"></script>
+
+{% endblock content %}
+

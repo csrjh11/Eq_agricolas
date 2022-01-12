@@ -1,0 +1,146 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+{% block links %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% endblock links %}
+
+{% block content %}
+<div class="container" >
+    <div class="row">
+        <div class="col-4 brd">
+            <input type="hidden" value = "{{equipo.num_equipo}}" id="eq">
+            <img  class = "fit-vista"alt= "Imagen" src = "{{ imagen.imageURL }}">
+            <h1>{{equipo.que_es}} {{equipo.marca}} {{equipo.modelo}}</h1>
+            <hr>
+            <div class = "row">
+                <div class="col-4">
+                    <h3>Año: {{equipo.año}}</h3>
+                </div>
+                <div class = "col-2"></div>
+                <div class ="col-6 center">
+                    <h3>Precio por dia:</h3>
+                    <h4 id = "precio">$ {{equipo.precio_renta_dia}}</h4>
+                </div>
+            </div>
+            <div class="row my-1">
+                <h4>{{equipo.descripcion}}</h4>
+            </div>
+        </div>
+        <div class="col-4 brd mx-1">
+            <h1>Dueño del Equipo</h1>
+            <h2>{{usuario.nombre}} {{usuario.apellido_1}} {{usuario.apellido_2}}</h2>
+            <h2>{{usuario.id_usuario}}</h2>
+            <hr>
+            <h1>Ubicación</h1>
+            <input type="hidden" value = "{{ equipo.donde_esta.coord_x}},{{ equipo.donde_esta.coord_y}}" id = "coords-eq">
+            <h3>{{equipo.donde_esta.municipio}}, {{equipo.donde_esta.estado}}</h3>
+            <hr>
+            <div>
+                <form class = "form" method = "POST" id = "forma-ub"> {% csrf_token %}
+                    <label for="op-ub" class ="btxt">Seleccione la ubicación de destino</label>
+                    <select id = "op-ub" required class = "form-control" name = "ubicacion">
+                        <option value selected>------------</option>
+                        {% for ub in op_ub %}
+                        <option>{{ub.alias}}</option>                        
+                        {% endfor %}
+                        {% for ub in op_ub %}
+                        <input type="hidden" value="{{ub.coord_x}},{{ub.coord_y}}" id = "{{ub.alias}}-crd">
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <div class = "detalles-ub brd my-4 mx-1 hidden">
+                <table id = "tabla-ub">
+                </table>                
+            </div>
+        </div>
+        <div class="col-3 brd mx-1">
+            <h1>Fechas de renta</h1>
+            <form id="forma-fechas" method="post">{% csrf_token %}
+                <input type="hidden" value id = "lugar" name= "ubicacion">
+                <input type="hidden" value id = "precio-total" name= "precio">
+                <div class = "frm-fechas">
+                    <div class="llegada center">
+                        <label for="inicio" class= "my-1">Fecha de Inicio</label>
+                        <input type="text" id = "inicio" autocomplete="off" placeholder="dd/mm/aaaa" value readonly class = "form-control center" name = "f-inicial">
+                        <div class="calendario-cl hidden cl-1">
+                            <div class="container con-cal">
+                                <div class="calendar">
+                                    <div class="month">
+                                        <i class="fas fa-angle-left prev-1"></i>
+                                        <div class="date-1">
+                                            <h1></h1>
+                                            <p>Jueves 24 de Junio, 2020</p>
+                                        </div>
+                                        <i class="fas fa-angle-right next-1"></i>
+                                    </div>
+                                    <div class="weekdays">
+                                        <div>Do</div>
+                                        <div>Lu</div>
+                                        <div>Ma</div>
+                                        <div>Mi</div>
+                                        <div>Ju</div>
+                                        <div>Vi</div>
+                                        <div>Sá</div>
+                                    </div>
+                                    <div class="days-1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="final center">
+                        <label for="final" class= "my-1">Fecha de Regreso</label>
+                        <input type="text" id = "final" autocomplete="off"  disabled placeholder="dd/mm/aaaa" value readonly class = "form-control center" name = "f-final">
+                        <div class="calendario-cl hidden cl-2">
+                            <div class="container con-cal">
+                                <div class="calendar">
+                                    <div class="month">
+                                        <i class="fas fa-angle-left prev-2"></i>
+                                        <div class="date-2">
+                                            <h1></h1>
+                                            <p>Jueves 24 de Junio, 2020</p>
+                                        </div>
+                                        <i class="fas fa-angle-right next-2"></i>
+                                    </div>
+                                    <div class="weekdays">
+                                        <div>Do</div>
+                                        <div>Lu</div>
+                                        <div>Ma</div>
+                                        <div>Mi</div>
+                                        <div>Ju</div>
+                                        <div>Vi</div>
+                                        <div>Sá</div>
+                                    </div>
+                                    <div class="days-2">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="boton derecha my-2">
+                        <btn class= "btn btn-primary bot-go">Siguiente</btn>
+                    </div>
+                </div>
+            </form>
+            <div class="detalles brd hidden my-2">
+                <table id = "tabla-d">
+                </table>
+            </div>
+            <div class="btn-dos center hidden">
+                <btn class = "btn btn-primary bot-sub">Enviar Solicitud</btn>
+                <h4>*Aún no se realizará un cobro</h4>
+            </div>
+        </div>
+    </div>
+    <div class="row center">
+        <h1>EL PRECIO MOSTRADO NO INCLUYE COSTOS DE TRANSPORTE</h1>
+    </div>
+</div>
+
+
+<script src = "{% static 'js/calen_2.js'%}" ></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6BgqA2oKejfHVnFodwFPmIDJZDIH6YeE" async defer></script>
+
+{% endblock content %}
