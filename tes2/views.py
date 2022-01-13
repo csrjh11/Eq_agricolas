@@ -97,7 +97,7 @@ modelos = {
   },
   "Otra" :[]
 }
-
+arf = "RRRRR"
 
 dic_formas = {
     "tractor": FormaTractor,
