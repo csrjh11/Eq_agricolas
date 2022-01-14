@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.deletion import CASCADE
@@ -206,8 +207,8 @@ class Solicitud(models.Model):
     """Solicitud de renta o compra de un equipo"""
     id_solicitud = models.AutoField(primary_key = True)
     id_solicitante = models.ForeignKey(Usuario, on_delete= models.CASCADE, related_name = "sol_sol")
-    id_dueño_eq = models.ForeignKey(Usuario,on_delete = models.CASCADE, related_name = "sol_dueño")
-    id_equipo = models.ForeignKey(Equipo, on_delete=models.CASCADE)
+    id_dueño_eq = models.ForeignKey(Usuario,on_delete = models.CASCADE, related_name = "sol_dueño", null =True)
+    id_equipo = models.ForeignKey(Equipo, on_delete=models.CASCADE, null = True)
     comentario = models.CharField(max_length = 255, null = True, blank = True)
     tipo_operacion = models.CharField(max_length=5)
     a_donde = models.ForeignKey(Ubicacion, on_delete=models.SET_DEFAULT, default="", related_name = "hacia_donde_sol")
@@ -216,7 +217,13 @@ class Solicitud(models.Model):
     fecha_inicio = models.DateField()
     fecha_final = models.DateField(null =True, blank=True)
     estatus = models.CharField(choices=OPCIONES_STATUS_SOLICITUD, max_length=10)
+    costo = models.IntegerField()
     tipo_solicitud = models.PositiveSmallIntegerField(default= 1)
+    # Tipo de solicitud
+        # 1 = "normal",
+        # 2 = "solicitud sin equipo"
+        # 3 = "solicitud respuesta"
+        
 
 class Conversacion(models.Model):
     id_conversacion = models.AutoField(primary_key=True)

@@ -15,7 +15,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 import random, math, json, os, io, sys
-from datetime import date
+from datetime import date, datetime
 hoy = date.today()
 
 
@@ -147,6 +147,14 @@ def genera_punto():
             dentro = not dentro
 
     return [dentro, punto]
+
+def calcula_precio(f1,f2, cash):
+    dias = (f2 - f1)
+    print(dias)
+    dia_c = math.trunc(dias.days) +1
+    print(dia_c)
+    precio = dia_c * cash
+    return precio
 
 
 
@@ -635,15 +643,14 @@ def renta_inicial(request, num_eq):
     }
     if request.method == "POST":
         d_post = request.POST.dict()
+        print(d_post)
         el_eq = equipo[0]
+        precio = d_post["precio"]
         fs = d_post["f-inicial"].split("/")
         fecha_inicial = f"{fs[2]}-{fs[1]}-{fs[0]}"
         ft = d_post["f-final"].split("/")
         fecha_fin = f"{ft[2]}-{ft[1]}-{ft[0]}"
-        print(d_post)
-        print(hoy)
         a_dnd = Ubicacion.objects.filter(alias = d_post["ubicacion"]).filter(id_usuario = interesado)
-        print(a_dnd)
         sol = Solicitud(
             id_solicitante      = interesado,
             id_equipo           = el_eq,
@@ -654,12 +661,12 @@ def renta_inicial(request, num_eq):
             fecha_solicitud     = hoy,
             fecha_inicio        = fecha_inicial,
             fecha_final         = fecha_fin,
-            estatus             = "1"
+            estatus             = "1",
+            costo               = precio,
+            tipo_solicitud      = 1
             )
-        print(sol)
         sol.save()
-        
-        return redirect("busqueda")
+        return redirect("noti")
     return render(request, "tes2/renta_inicial.html", context)
 
 #Regresa un JSON con las fechas de las transacciones de un equipo
@@ -682,13 +689,15 @@ def solicitudes_usuario(request):
     if usr.is_anonymous:
         raise PermissionDenied
     el_usu = Usuario.objects.get(id_usuario = usr)
-    print(el_usu)
     soli = Solicitud.objects.filter(id_dueño_eq = el_usu).filter(estatus = "1")
-    print(soli)
+    otras_sol = Solicitud.objects.filter(id_solicitante = el_usu).filter(estatus = "1")
     if soli.count() == 0:
         soli = "na"
+    if otras_sol.count() == 0:
+        otras_sol = "na"
     context = {
         "solicitudes":   soli,
+        "otras": otras_sol,
     }
     return render(request, "tes2/notificaciones.html", context)
 
@@ -699,16 +708,10 @@ def solicitudes_especificas(request, id_sol):
         raise PermissionDenied
     sol = Solicitud.objects.select_related("id_solicitante").select_related("id_equipo").filter(id_solicitud = id_sol)
     la_sol = sol[0]
-    print(la_sol)
     context = {
         "sol" : la_sol,
     }
-    if la_sol.tipo_operacion == "venta":
-        costo = la_sol.id_equipo.precio_venta
-    elif la_sol.tipo_operacion == "renta":
-        costo = calcula_precio(la_sol.fecha_inicio, la_sol.fecha_final, la_sol.id_equipo.precio_renta_dia)
     if request.method == "POST":
-        print("postiao")
         si_no = request.POST.dict()
         if si_no["wwmd"] == "true":
             la_sol.estatus = "3"
@@ -720,7 +723,7 @@ def solicitudes_especificas(request, id_sol):
                     hacia_donde         = la_sol.a_donde,
                     estatus             = "3",
                     fecha_inicial       = la_sol.fecha_inicio,
-                    importe_total       = costo,
+                    importe_total       = la_sol.costo,
                     tipo_transaccion    = la_sol.tipo_operacion
             )
             if la_sol.tipo_operacion == "renta":
@@ -756,15 +759,6 @@ def crea_conversa(tr):
         id_conversacion = n_co
     )    
     m_msj.save()
-
-
-def calcula_precio(f1,f2, cash):
-    dias = (f2 - f1)
-    print(dias)
-    dia_c = math.trunc(dias.days) +1
-    print(dia_c)
-    precio = dia_c * cash
-    return precio
 
 
 def lista_transacciones_usuario(request):

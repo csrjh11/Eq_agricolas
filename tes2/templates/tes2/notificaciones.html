@@ -2,9 +2,21 @@
 {%load static%}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class = "col center">
+<div class="container my-2">
+    <div class="row justify-content-start">
+        <div class = "col-2">
+            <button class="btn btn-primary" id = "uno">
+                Solicitudes a Mis Equipos
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-light" id = "dos">
+                Mis Solicitudes Publicadas
+            </button>
+        </div>
+    </div>
+    <div class="row mt-1">
+        <div class = "col center" id = "contenido-1">
             {% if solicitudes  == "na" %}
             <h1>No tiene solicitudes pendientes</h1>
             {% else %}
@@ -34,11 +46,40 @@
             </table>
             {% endif %}
         </div>
+        <div class = "col center hidden" id = "contenido-2">
+            {% if otras  == "na" %}
+            <h1>No tiene solicitudes pendientes</h1>
+            {% else %}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Dueño del Equipo</th>
+                    <th scope="col">Equipo</th>
+                    <th scope="col">Tipo de transacción</th>
+                    <th scope="col">Fechas</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id = "num">
+                {% for sol in otras %}
+                <tr>  
+                    <td>{{sol.id_dueño_eq}}</td>
+                    <td>{{sol.id_equipo}}</td>
+                    <td>{{sol.tipo_operacion|capfirst}}</td>
+                    <td>{{sol.fecha_inicio|date:"d/m/Y"}} - {{sol.fecha_final|date:"d/m/Y"}}</td>
+                    <td> 
+                        <a class = "btn btn-outline-success" href="mis_solicitudes/{{sol.id_solicitud}}">Más Información</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
     </div>
 </div>
 
-
-
+<script type="text/javascript" src = "{%static 'js/solicitudes.js' %}"></script>
 
 
 {% endblock content %}
