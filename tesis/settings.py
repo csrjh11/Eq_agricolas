@@ -28,7 +28,7 @@ SECRET_KEY = '$oq%p3c9uqj_9&_+sbrdq7ut5ui84_*7a0a_7snm%@^o6a+zdu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["stark-peak-41473.herokuapp.com/", "127.0.0.1"]
 
 
 # Application definition
@@ -82,14 +82,14 @@ WSGI_APPLICATION = 'tesis.wsgi.application'
 
 DATABASES = {
 
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": "datos_tesis",
-#         "USER" : "postgres",
-#         "PASSWORD" : "Jac0060*",
-#         "HOST" : "localhost",
-#         "PORT" : "5432",
-# }
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql_psycopg2",
+    #     "NAME": "tesis_data",
+    #     "USER" : "postgres",
+    #     "PASSWORD" : "Jac0060*",
+    #     "HOST" : "localhost",
+    #     "PORT" : "5432",
+    #     }
 
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

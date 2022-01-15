@@ -4,19 +4,21 @@
 {% block content %}
 <div class="container" >
     <div class="row">
-        <div class="col-4 brd mx-1 center">
-            <h1>Equipo</h1>
-            <h2>{{sol.id_equipo.nombre_equipo|capfirst}}</h2>
-            <hr>
-            <h1>Usuario Interesado</h1>
-            <h2>{{sol.id_solicitante.nombre|capfirst}} {{notif.id_solicitante.apellido_1|capfirst}} {{notif.id_solicitante.apellido_2|capfirst}}</h2>
-            <hr>
-            <h2>Información de ubicaciones</h2>
-            <br>
-            <h3>1 - Ubicación del Equipo </h3>
-            <h4>{{sol.desde_donde.municipio}}, {{sol.desde_donde.estado}}</h4>
-            <h3>2 - Destino del Equipo </h3>
-            <h4>{{sol.a_donde.municipio}}, {{sol.a_donde.estado}} </h4>
+        <div class="col-4 brd mx-1">
+            <div class="center">
+                <h1>Equipo</h1>
+                <h2>{{sol.id_equipo.nombre_equipo|capfirst}}</h2>
+                <hr>
+                <h1>Usuario Interesado</h1>
+                <h2>{{sol.id_solicitante.nombre|capfirst}} {{notif.id_solicitante.apellido_1|capfirst}} {{notif.id_solicitante.apellido_2|capfirst}}</h2>
+                <hr>
+                <h2>Información de ubicaciones</h2>
+                <br>
+                <h3>1 - Ubicación del Equipo </h3>
+                <h4>{{sol.desde_donde.municipio}}, {{sol.desde_donde.estado}}</h4>
+                <h3>2 - Destino del Equipo </h3>
+                <h4>{{sol.a_donde.municipio}}, {{sol.a_donde.estado}} </h4>
+            </div>
         </div>
         <div class="col-4 brd mx-1 p-1">
             <img class= "mapa-img" src = "https://maps.googleapis.com/maps/api/staticmap?&size=496x496&maptype=roadmap
