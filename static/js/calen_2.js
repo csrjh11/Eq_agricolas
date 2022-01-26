@@ -289,7 +289,9 @@ botNext.addEventListener("click", function(){
     document.getElementById("tabla-d").innerHTML += `<tr><td>Precio x ${diasRenta} dia(s) = </td> <td class="right"><strong> $ ${precioTotal} </strong></td> </tr>`
     document.getElementById("precio-total").value = precioTotal
     document.querySelector(".boton").classList.add("hidden");
-    document.querySelector(".btn-dos").classList.remove("hidden")
+    document.querySelector("#comentario").classList.remove("hidden");
+    document.querySelector(".btn-dos").classList.remove("hidden");
+    
     
 
 
@@ -340,6 +342,9 @@ const botSub = document.querySelector(".bot-sub")
 
 botSub.addEventListener("click", function(){
 
+    const valCom = document.getElementById("com").value
+    document.getElementById("comentario-final").value = valCom
+    
     forUb.submit()
     forFechas.submit()
 

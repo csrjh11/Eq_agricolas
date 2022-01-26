@@ -14,11 +14,18 @@
                 Mis Solicitudes Publicadas
             </button>
         </div>
+        <div class="col-2">
+            <button class="btn btn-light" id = "dos">
+                Mis Solicitudes "Abiertas"
+            </button>
+        </div>
     </div>
     <div class="row mt-1">
         <div class = "col center" id = "contenido-1">
             {% if solicitudes  == "na" %}
-            <h1>No tiene solicitudes pendientes</h1>
+            <span class ="mt-3">
+                <h1>No tiene solicitudes pendientes</h1>
+            </span>
             {% else %}
             <table class="table table-hover">
                 <thead>
@@ -33,7 +40,7 @@
                 <tbody id = "num">
                 {% for sol in solicitudes %}
                 <tr>  
-                    <td>{{sol.id_solicitante}}</td>
+                    <td>{{sol.id_solicitante.nombre|capfirst}} {{sol.id_solicitante.apellido_1|capfirst}} {{sol.id_solicitante.apellido_2|capfirst}}</td>
                     <td>{{sol.id_equipo}}</td>
                     <td>{{sol.tipo_operacion|capfirst}}</td>
                     <td>{{sol.fecha_inicio|date:"d/m/Y"}} - {{sol.fecha_final|date:"d/m/Y"}}</td>
@@ -48,25 +55,62 @@
         </div>
         <div class = "col center hidden" id = "contenido-2">
             {% if otras  == "na" %}
-            <h1>No tiene solicitudes pendientes</h1>
-            {% else %}
+            <span class ="mt-3">
+                <h1>No tiene solicitudes pendientes</h1>
+            </span>            {% else %}
             <table class="table table-hover">
                 <thead>
                 <tr>
                     <th scope="col">Dueño del Equipo</th>
                     <th scope="col">Equipo</th>
-                    <th scope="col">Tipo de transacción</th>
+                    <th scope="col">Tipo de Transacción</th>
                     <th scope="col">Fechas</th>
+                    <th scope="col">Estatus</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody id = "num">
                 {% for sol in otras %}
                 <tr>  
-                    <td>{{sol.id_dueño_eq}}</td>
-                    <td>{{sol.id_equipo}}</td>
+                    <td>{{sol.id_dueño_eq.nombre}} {{sol.id_dueño_eq.apellido_1}} {{sol.id_dueño_eq.apellido_2}}</td>
+                    <td>{{sol.id_equipo.tipo_equipo|capfirst}} {{sol.id_equipo.marca}} {{sol.id_equipo.modelo}}</td>
                     <td>{{sol.tipo_operacion|capfirst}}</td>
                     <td>{{sol.fecha_inicio|date:"d/m/Y"}} - {{sol.fecha_final|date:"d/m/Y"}}</td>
+                    <td>{{sol.estatus_sol}}</td>
+                    <td> 
+                        <a class = "btn btn-outline-success" href="mis_solicitudes/{{sol.id_solicitud}}">Más Información</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+        <div class = "col center hidden" id = "contenido-3">
+            {% if abiertas  == "na" %}
+            <span class ="mt-3">
+                <h1>No tiene solicitudes pendientes</h1>
+            </span>            
+            {% else %}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Id de la Solicitud</th>
+                    <th scope="col">Tipo de Equipo</th>
+                    <th scope="col">Tipo de Transacción</th>
+                    <th scope="col">Fechas</th>
+                    <th scope="col">Estatus</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id = "num">
+                {% for sol in otras %}
+                <tr>  
+                    <td>{{sol.id_dueño_eq.nombre}} {{sol.id_dueño_eq.apellido_1}} {{sol.id_dueño_eq.apellido_2}}</td>
+                    <td>{{sol.id_equipo.tipo_equipo|capfirst}} {{sol.id_equipo.marca}} {{sol.id_equipo.modelo}}</td>
+                    <td>{{sol.tipo_operacion|capfirst}}</td>
+                    <td>{{sol.fecha_inicio|date:"d/m/Y"}} - {{sol.fecha_final|date:"d/m/Y"}}</td>
+                    <td>{{sol.estatus_sol}}</td>
                     <td> 
                         <a class = "btn btn-outline-success" href="mis_solicitudes/{{sol.id_solicitud}}">Más Información</a>
                     </td>
@@ -78,6 +122,14 @@
         </div>
     </div>
 </div>
+
+{% if messages %}
+   <script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+   </script>
+{% endif %}
 
 <script type="text/javascript" src = "{%static 'js/solicitudes.js' %}"></script>
 

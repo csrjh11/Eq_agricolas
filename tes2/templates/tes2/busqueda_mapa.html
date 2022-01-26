@@ -1,0 +1,90 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+{% block links%}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+crossorigin=""/>
+<link rel="stylesheet" href="{% static 'dist/MarkerCluster.css' %}">
+<link rel="stylesheet" href="{% static 'dist/MarkerCluster.Default.css' %}">
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+crossorigin=""></script>
+
+<script type="text/javascript" src="{% static 'dist/leaflet.markercluster.js' %}"></script>
+
+
+{% endblock links %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col derecha">
+            <a href="/browse" class = "btn btn-primary">Ir a Búsqueda por Lista</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <form class = "form-control" id = "la-forma">
+                <label for="tipo_equipo" class = "center" >Tipo de Equipo</label>
+                <select name = "tipo_equipo" id = "tipo_equipo" class ="form-control">
+                    <option value = "">----</option>
+                    <option value = "tractor">Tractor</option>
+                    <option value = "arado">Arado</option>
+                    <option value = "rastra">Rastra</option>
+                    <option value = "sembradora">Sembradora</option>
+                    <option value = "pulverizadora">Pulverizadora</option>
+                    <option value = "cosechadora">Cosechadora</option>
+                    <option value = "otros">Otros</option>
+                </select>
+                <br>
+                <input type="hidden" value="" id = "f1" name = "fecha_1">
+                <input type="hidden" value="" id = "f2" name = "fecha_2">
+                <div class="wrapper">
+                    <p>Rango de Años</p>
+                    <div class="values">
+                        <span id = "rango1">0</span>
+                        <span>&dash;</span>
+                        <span id = "rango2">100</span>
+                    </div>
+                    <div class="container-sl">
+                    <div class="slider-track"></div>
+                    <input type="range" min = 1975 max = 2022 value = "1975" id = "slider-1" oninput="slideOne()">
+                    <input type="range" min = 1975 max = 2022 value = "2022" id = "slider-2" oninput="slideTwo()">
+                    </div>
+                </div>
+                <br>
+                <label for="para_que" class = "center" >Diponibilidad</label>
+                <select name = "para_que" id = "para_que" class ="form-control">
+                    <option value = "">Para Venta y Renta</option>
+                    <option value = renta>Venta</option>
+                    <option value = venta>Renta</option>
+                </select>
+                <br>
+            </form>
+            <div class="mt-3">
+                <div id ="btn-reset" class ="inline">
+                    <button class="btn btn-primary">Eliminar filtros</button>
+                </div>
+                <div class="der_elemento" id ="btn-go">
+                    <button class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-10">
+            <div class = "row map-container">
+                <div id = "map">    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript" src="{% static 'js/mapa_busqueda.js' %}"></script>
+
+
+
+{% endblock content %}

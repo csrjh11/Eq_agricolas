@@ -1,0 +1,18 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row center">
+        <h1>Para Registrar un equipo, primero debes definir una Ubicación</h1>
+        <div class="col">
+            <a class = "btn btn-success mt-4" href = "{% url 'reg_ubicacion' %}"> Registrar una Ubicación</a>
+            <a class = "btn btn-danger mt-4" href = "{% url 'mi-cuenta' %}"> Cancelar</a>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock content %}

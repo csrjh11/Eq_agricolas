@@ -1,20 +1,76 @@
 {% extends "tes2/main.html" %}
+{% load static %}
 
 {% block content %}
-<div class = "container">
-    <br>
-    <div class = "hero-text-box">
-        <h1>Tesis CJH<br> </h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="row my-3">
+                <h1>Tesis CJH</h1>
+            </div>
+            <div class="row">
+                <div class="col desc">
+                    <p>
+                        Sistema de Información para facilitar la interacción entre usuarios <br>interesados en rentar o comprar 
+                        equipos agrícolas.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    Descipción 2
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    Descipción 3
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="row center mb-2">
+                <h2>
+                    Busca un Equipo
+                </h2>
+            </div>
+            <div class="row hh">
+                <form class = "form-control" id = "la-forma">
+                    <div class="mb-3">
+                        <label for="tipo_equipo" class = "center" >Tipo de Equipo</label>
+                        <select name = "tipo_equipo" id = "tipo_equipo" class ="form-control">
+                            <option value = "">Todos</option>
+                            <option value = "tractor">Tractor</option>
+                            <option value = "arado">Arado</option>
+                            <option value = "rastra">Rastra</option>
+                            <option value = "sembradora">Sembradora</option>
+                            <option value = "pulverizadora">Pulverizadora</option>
+                            <option value = "cosechadora">Cosechadora</option>
+                            <option value = "otros">Otros</option>
+                        </select>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="estado" >Estado</label>
+                        <select name = "ubicacion_base__estado" id = "estado" class ="form-control">
+                            <option value = "">Todos</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 hidden" id = "div-m">
+                        <label for="municipio" id = "labelM">Municipio</label>
+                        <select name = "ubicacion_base__municipio" id = "municipio" class ="form-control">
+                        </select>
+                    </div>
+                </form>
+                <div class="derecha m-2">
+                    <button class="btn btn-primary" id = busqueda>Buscar Equipos</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class = "container">
-<br>
-    <a class="btn btn-primary"  href="/browse">Buscar Maquinaria</a>
-</div>
-</div>
-
-
+<script type="text/javascript" src="{%static 'js/principal.js'%}"></script>
 
 
 {% endblock content %}

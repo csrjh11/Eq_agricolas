@@ -3,10 +3,12 @@
 
 {% block content %}
 
-<h1>No cuentas con equipos registrados</h1>
-
-<div class = "col mx-5">
-    <a class = "btn btn-success center" href = "{% url 'Registro de Equipo' %}"> Ir a registro de Equipo</a>
+<div class="container">
+    <div class="row center">
+        <h1>No cuentas con equipos registrados</h1>
+        <a class = "btn btn-success mt-4" href = "{% url 'Registro de Equipo' %}"> Registrar un Equipo</a>
+    </div>
 </div>
+
 
 {% endblock content %}

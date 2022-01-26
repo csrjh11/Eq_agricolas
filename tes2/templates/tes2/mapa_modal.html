@@ -15,24 +15,20 @@ crossorigin=""></script>
 
 
 {% block content %}
-
-<div class = "row">
-    <h1>
-        Selecciona la ubicación en el mapa
-    </h1>
-</div>
-
-<hr>
-
-<div class = "row map-container">
-    <div id = "map">    </div>
-</div>
-
-<hr>
-
-<div class = "container">
+<div class="container">
+    <div class = "row center">
+        <h1>
+            Selecciona la ubicación en el mapa
+        </h1>
+    </div>
+    <hr>
     <div class="row">
-        <div class="col-5">
+        <div class="col-9">
+            <div class = "row map-container">
+                <div id = "map">    </div>
+            </div>
+        </div>
+        <div class="col-3">
             <form class = "form" method = "POST" id = "forma-princ">     {%csrf_token%}
                 <input required type="hidden" id = "cdx" name="coord_x">
                 <input required type="hidden" id = "cdy" name="coord_y">
@@ -46,6 +42,8 @@ crossorigin=""></script>
         </div>
     </div>
 </div>
+
+
 
 
 <script type="text/javascript" src="{% static 'js/mapa_reg_ub.js' %}"></script>

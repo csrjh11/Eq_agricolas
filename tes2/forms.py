@@ -13,15 +13,32 @@ OPCIONES_TIPO_ARADO = (
 )
 
 OPCIONES_TIPO_SEM = (
-    ("de_voleo", "De Voleo"),
-    ("chorrillo","A chorrillo"),
-    ("presicion", "De Precisión"),
-
+    ("Voleo", "De Voleo"),
+    ("Chorrillo","A chorrillo"),
+    ("Precision", "De Precisión"),
+    ("Monograno", "Monograno"),
 )
 
 OPCIONES_NEU_MEC = (
-    ("neumatico", "Neumática"),
-    ("mecanico", "Mecánica"),
+    ("neumatica", "Neumática"),
+    ("mecanica", "Mecánica"),
+)
+
+OPCIONES_TIPO_RASTRA = (
+    ("Integral", "Integral"),
+    ("De Tiro", "De Tiro"),
+)
+
+OPCIONES_TIRO_RASTRA = (
+    ("Disco Liso", "Disco Liso"),
+    ("Disco Dentado", "Disco Dentado"),
+    ("Discos Combinados", "Discos Combinados"),
+)
+
+OPCIONES_DISPOSICION_RASTRA = (
+    ("Simple", "Simple"),
+    ("Tandem", "Tandem"),
+    ("Offset", "Offset"),
 )
 
 ahora = datetime.datetime.now()
@@ -34,9 +51,9 @@ class FormaEquipo(forms.ModelForm):
         ubi = Ubicacion.objects.filter(id_usuario = user).exclude(eliminado = True)
         self.fields["donde_esta"].queryset = ubi
     
-    año = forms.IntegerField(widget = forms.NumberInput(attrs={"class":"form-control"}), min_value=1930, max_value = año + 1 )
-    precio_venta = forms.FloatField(widget = forms.NumberInput(attrs={"class":"form-control"}), min_value=0 )
-    precio_renta_dia = forms.FloatField(widget = forms.NumberInput(attrs={"class":"form-control"}), min_value=0 )
+    año = forms.IntegerField(label = "Año de Manufactura", widget = forms.NumberInput(attrs={"class":"form-control"}), min_value=1930, max_value = año + 1 )
+    precio_venta = forms.FloatField(widget = forms.NumberInput(attrs={"class":"form-control"}), min_value=0, label= "Precio de Venta (Mxn)")
+    precio_renta_dia = forms.FloatField(widget = forms.NumberInput(attrs={"class":"form-control"}), min_value=0, label = "Precio de Renta/Dia (Mxn)")
     marca = forms.ChoiceField(widget= forms.Select(attrs={"class":"form-control"}))
     modelo = forms.ChoiceField(widget= forms.Select(attrs={"class":"form-control"}))
 
@@ -56,11 +73,26 @@ class FormaEquipo(forms.ModelForm):
 
 
 #################################################### Formas especificas de equipos ###########################
+
+
+ch_estrias = (
+    (6, "6"),
+    (21, "21")
+)
+
+
+ch_traccion = (
+    ("delantera", "Delantera"),
+    ("trasera", "Trasera"),
+    ("4wd", "4WD"),
+)
+
+
 class FormaTractor(forms.ModelForm):
     potencia = forms.IntegerField(widget=NumberInput(attrs={"class":"form-control"}), min_value=1, label= "Potencia del Motor (HP)")
-    estrias_PTO = forms.ChoiceField(choices = [6,21], widget= forms.Select(attrs={"class":"form-control"}), label= "Estrias de la Toma de Fuerza")
+    estrias_PTO = forms.ChoiceField(choices = ch_estrias, widget= forms.Select(attrs={"class":"form-control"}), label= "Estrias de la Toma de Fuerza")
     enganche_tres_puntos = forms.BooleanField(label = "Tiene enganche de tres puntos?")
-    traccion = forms.ChoiceField(choices= ["Delantera", "Trasera", "4WD"], label= "Tipo de Tracción", widget= forms.Select(attrs={"class":"form-control"}))
+    traccion = forms.ChoiceField(choices= ch_traccion, label= "Tipo de Tracción", widget= forms.Select(attrs={"class":"form-control"}))
     cabina = forms.BooleanField(label = "Tiene Cabina?")
 
     class Meta:
@@ -80,6 +112,11 @@ class FormaArado(forms.ModelForm):
 
 
 class FormaRastra(forms.ModelForm):
+
+    acople = forms.ChoiceField(choices = OPCIONES_TIPO_RASTRA, widget=forms.Select(attrs={"class":"form-control"}))
+    tipo_cuerpo = forms.ChoiceField(choices = OPCIONES_TIRO_RASTRA, widget=forms.Select(attrs={"class":"form-control"}))
+    no_cuerpos = forms.IntegerField(widget=NumberInput(attrs={"class":"form-control"}), min_value=1)
+    disposicion_cuerpos = forms.ChoiceField(choices = OPCIONES_DISPOSICION_RASTRA, widget=forms.Select(attrs={"class":"form-control"}))
 
     class Meta:
         model = Rastra
@@ -121,9 +158,11 @@ class FromaCosechadora(forms.ModelForm):
       
 
 class Forma_Registro_Usuario(UserCreationForm):
-    email = forms.EmailField()
-    password1 = forms.CharField(label = "contraseña", widget = forms.PasswordInput)
-    password2 = forms.CharField(label = "Confirma contraseña", widget = forms.PasswordInput)
+
+    username = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}), label= "Elija un Nombre de Usuario", error_messages= {"invaid": "Este nombre de usuario ya existe, favor de camiarlo"})
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"class":"form-control"}), label="Correo Electronico")
+    password1 = forms.CharField(label = "Contraseña", widget = forms.PasswordInput(attrs={"class":"form-control"}))
+    password2 = forms.CharField(label = "Confirme contraseña", widget = forms.PasswordInput(attrs={"class":"form-control"}))
 
     class Meta:
         model = User
@@ -156,7 +195,11 @@ class Forma_Edicion_Ubicacion(forms.ModelForm):
 
 class Forma_Datos_Interesado(forms.ModelForm):
 
-    nombre = forms.TextInput(attrs={"class": "form-control"})
+    nombre = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}), label= "Nombre")
+    apellido_1 = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}), label= "Apellido Paterno")
+    apellido_2 = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}), label= "Apellido Materno")
+    telefono = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}), label= "Telefono Fijo")
+    celular = forms.CharField(widget=forms.TextInput(attrs={"class":"form-control"}), label= "Nombre")
 
     class Meta:
         model = Usuario

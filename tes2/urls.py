@@ -24,6 +24,7 @@ urlpatterns = [
     path("fechas_renta/<num_eq>",views.api_fechas, name = "API-fechas"),
     path("mis_solicitudes",views.solicitudes_usuario, name = "noti"),
     path("mis_solicitudes/<id_sol>",views.solicitudes_especificas, name = "noti-esp"),
+    path("mis_solicitudes/<id_sol>/rsp", views.respuesta_sol_eq),
     path("mi_cuenta/ubicaciones",views.ubicaciones_usuario, name = "ubicaciones"),
     path("mi_cuenta/ubicaciones/<id_ub>",views.ubicacion_especifica, name = "ub-esp"),
     path("mi_cuenta/ubicaciones/<id_ub>/eliminar", views.elimina_ubicacion, name ="e-ub"),
@@ -35,4 +36,7 @@ urlpatterns = [
     path("mi_cuenta/mis_mensajes", views.mensajes, name = "mensajes"),
     path("mensajes/<id_conv>", views.consigue_mensajes),
     path("conv/<id_conv>", views.nuevo_msj),
+    path("browse_mapa", views.busqueda_mapa, name="busq-mapa"),
+    path("solicitudes_abiertas/gen", views.solicitud_abierta_inicial),
+    path("solicitudes_abiertas", views.solicitudes_abiertas),
 ]

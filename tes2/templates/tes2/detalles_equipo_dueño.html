@@ -1,19 +1,27 @@
 {% extends "tes2/main.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 
 <div class="container">
 
-  <div class="row center">
-    <h2>Equipo # {{equipo.num_equipo}}</h2>    
+  <div class="row mt-2 mb-3">
+    <div class="col-6 center">
+      <h1>Equipo {{equipo.num_equipo}}</h1>
+    </div>
+     <div class="col-6 center">
+       <h1>Estatus del Equipo: {{equipo.status|capfirst}}</h1>
+     </div>
+     <hr>
   </div>
   <div class="row l-g">
-    <div class="col-6">
+    <div class="col-6 vertical">
       <span class = "center">
-        <h2>Datos Generales</h2>
+        <h2><u>Datos Generales</u></h2>
       </span>
       <form id = "generales" method="POST">{% csrf_token %}
+        <input type = "hidden" value="forma_general" name = "id_forma">
         <p>
           <label for="id_nombre_equipo">Nombre del Equipo:</label>
           <input type="text" name="nombre_equipo" value="{{equipo.nombre_equipo|title}}" class="form-control" maxlength="100" required="" id="id_nombre_equipo" disabled>
@@ -72,16 +80,22 @@
         </div>
         <p>
           <label for="id_has">Hectáreas que trabaja en promedio (Cada ciclo):</label>
-          <input type="number" name="hecatreas_trabajadas" value={{equipo.hecatreas_trabajadas}} class="form-control"  required="" id="id_has" disabled>
+          <input type="number" name="hecatreas_trabajadas" value={{equipo.hecatreas_trabajadas|floatformat:0|intcomma}} class="form-control"  required="" id="id_has" disabled>
         </p> 
         <p>
-          <label for="id_donde_esta">Ubicación Base del Equipo</label>
-          <select name="donde_esta" class="form-control" required="" id="id_donde_esta" disabled>
-            <option  value = "{{equipo.donde_esta}}" selected>{{equipo.donde_esta.alias}} ({{equipo.donde_esta.municipio}}, {{equipo.donde_esta.estado}})</option>
+          <label for="id_ubicacion_base">Ubicación Base del Equipo</label>
+          <select name="ubicacion_base" class="form-control" required="" id="id_ubicacion_base" disabled>
+            {% for ub in ubicaciones%}
+              {% if ub.alias == equipo.ubicacion_base.alias%}
+                <option  value = "{{equipo.ubicacion_base}}" selected>{{equipo.ubicacion_base.alias}} ({{equipo.ubicacion_base.municipio}}, {{equipo.ubicacion_base.estado}})</option>
+              {% else %}
+                <option value = "{{ub}}">{{ub.alias}} ({{ub.municipio}}, {{ub.estado}})</option>
+              {% endif %}
+            {% endfor %}
           </select>
         </p>
         <p>
-          <label for="id_para_que">Para que:</label>
+          <label for="id_para_que">¿Venta, Renta o Ambos?</label>
           <select name="para_que" class="form-control" required="" id="id_para_que" disabled>
             <option value="venta" {% if equipo.para_que == "venta" %} selected {% endif %} >Venta</option>          
             <option value="renta" {% if equipo.para_que == "renta" %} selected {% endif %} >Renta</option>          
@@ -91,19 +105,19 @@
         <div class="row">
           <div class="col-6">
             <p>
-              <label for="id_precio_venta">Precio de venta (MXN):</label>
-              <input type="number" name="precio_venta" value="{{equipo.precio_venta}}" class="form-control" min="0" step="any" required="" id="id_precio_venta" disabled>
+              <label for="id_precio_venta">Precio de venta<br/>(MXN):</label>
+              <input type="number" name="precio_venta" value="{{equipo.precio_venta|floatformat:0}}" class="form-control" min="0" step="any" required="" id="id_precio_venta" disabled>
             </p>
           </div>
           <div class="col-6">
             <p>
               <label for="id_precio_renta_dia">Precio de renta/dia (MXN):</label>
-              <input type="number" name="precio_renta_dia" value = "{{equipo.precio_renta_dia}}" class="form-control" min="0" step="any" required="" id="id_precio_renta_dia" disabled>
+              <input type="number" name="precio_renta_dia" value = "{{equipo.precio_renta_dia|floatformat:0}}" class="form-control" min="0" step="any" required="" id="id_precio_renta_dia" disabled>
             </p>
           </div>
         </div>
         <div class="derecha">
-          <button class="btn" type="button" id = "btn-alias">
+          <button class="btn" type="button" id = "btn-generales">
               Editar Datos Generales
               <i class="fa  fa-pencil-square-o" aria-hidden="true"></i>
           </button>
@@ -111,15 +125,240 @@
       </form>
     </div>
     <div class="col-6">
-      <span class = "center">
-        <h2>Datos Especificos</h2>
-      </span>
-      <form id = "especificos" method="POST">{% csrf_token %}
-        {{forma.as_p}}
-      </form>
-      <img  class = "fit-vista" alt= "Imagen" src = "{{ img.first.imageURL }}">
-
+      <div class="row">
+        <span class = "center">
+          <h2><u>Datos Especificos</u></h2>
+        </span>
+        <form id = "especificos" method="POST">{% csrf_token %}
+          <input type = "hidden" value="forma_especifica" name = "id_forma">
+          {% if forma == "arado"%}
+          <p>
+            <label for="id_tipo">Tipo:</label> 
+            <select name="tipo" class="form-control" id="id_tipo" disabled>
+              <option value="vertedera" {% if det.tipo == "vertedera" %} selected {% endif %}>Vertedera</option>
+              <option value="disco" {% if det.tipo == "disco" %} selected {% endif %}>Disco</option>
+              <option value="cincel" {% if det.tipo == "cincel" %} selected {% endif %}>Cincel</option>
+              <option value="subsuelo" {% if det.tipo == "subsuelo" %} selected {% endif %}>Subsuelo</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_reversible">Reversible:</label>
+            <select name = "reversible" class = "form-control" id = "id_reversible" disabled>
+              <option value="True" {% if det.reversible %} selected {% endif %}>Si</option>
+              <option value="False" {% if det.reversible == False %} selected {% endif %}>No</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_no_cuerpos">Número de cuerpos:</label>
+            <input type="number" name="no_cuerpos" class="form-control" min="1" required="" id="id_no_cuerpos" disabled value="{{det.no_cuerpos}}">
+          </p>
+          <p>
+            <label for="id_neumatica_mecanica">Neumatico o Mecánico:</label>
+            <select name="neumatica_mecanica" class="form-control" id="id_neumatica_mecanica" disabled>
+              <option value="neumatico" {% if det.neumatica_mecanica == "neumatico" %} selected {% endif %}>Neumático</option>
+              <option value="mecanico" {% if det.neumatica_mecanica == "mecanico" %} selected {% endif %}>Mecánico</option>
+            </select>
+          </p>
+          {% elif forma == "tractor" %}
+          <p>
+            <label for="id_potencia">Potencia del Motor (HP):</label> 
+            <input type="number" name="potencia" class="form-control" min="1" required="" id="id_potencia" value = {{det.potencia}} disabled>
+          </p>
+          <p>
+            <label for="id_estrias_PTO">Estrías de la Toma de Fuerza:</label>
+            <select name="estrias_PTO" class="form-control" id="id_estrias_PTO" disabled>
+              <option value="6" {% if det.estrias_PTO == 6%} selected {%endif%}>6</option>
+              <option value="21" {% if det.estrias_PTO == 21%} selected {%endif%}>21</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_enganche_tres_puntos">¿Tiene enganche de tres puntos?</label>
+            <select name="enganche_tres_puntos" id="id_enganche_tres_puntos" disabled class="form-control">
+              <option value="True" {% if det.enganche_tres_puntos %} selected {% endif %}>Si</option>
+              <option value="False" {% if det.enganche_tres_puntos == False %} selected {% endif %}>No</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_traccion">Tipo de Tracción:</label>
+            <select name="traccion" class="form-control" id="id_traccion" disabled>
+              <option value="delantera" {% if det.traccion == delantera%} selected {%endif%}>Delantera</option>
+              <option value="trasera" {% if det.traccion == trasera%} selected {%endif%}>Trasera</option>
+              <option value="4wd" {% if det.traccion == 4wd%} selected {%endif%}>4WD</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_cabina">¿Tiene Cabina?</label>
+            <select name="cabina" id="id_cabina"  class = "form-control" disabled>
+              <option value="True" {% if det.cabina %} selected {% endif %}>Si</option>
+              <option value="False" {% if det.cabina == False %} selected {% endif %}>No</option>
+            </select>
+          </p>
+          {% elif forma == "rastra" %}
+          <p><label for="id_acople">Tipo de Acople al Tractor:</label>
+            <select name="acople" class="form-control" id="id_acople" disabled>
+              <option value="integral" {% if det.acolpe == "Integral"%} selected {%endif%}>Integral</option>
+              <option value="tiro" {% if det.acolpe == "De Tiro" %} selected {%endif%}>De Tiro</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_tipo_cuerpo">Tipo  de Cuerpos:</label>
+            <select name="tipo_cuerpo" class="form-control" id="id_tipo_cuerpo" disabled>
+              <option value="Disco Liso"  {% if det.tipo_cuerpo == "Disco Liso" %} selected {%endif%}>Disco Liso</option>
+              <option value="Disco Dentado" {% if det.tipo_cuerpo == "Disco Dentado" %} selected {%endif%}>Disco Dentado</option>
+              <option value="Discos Combinados" {% if det.tipo_cuerpo == "Discos Combinados" %} selected {%endif%}>Discos Combinados</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_no_cuerpos">No de Cuerpos:</label> 
+            <input type="number" name="no_cuerpos" class="form-control" min="1" required="" id="id_no_cuerpos" disabled value="{{det.no_cuerpos}}">
+          </p>
+          <p>
+            <label for="id_disposicion_cuerpos">Disposición de los Cuerpos:</label>
+            <select name="disposicion_cuerpos" class="form-control" id="id_disposicion_cuerpos" disabled>
+              <option value="Simple" {% if det.disposicion_cuerpos == "Simple" %} selected {%endif%}>Simple</option>
+              <option value="Tandem" {% if det.disposicion_cuerpos == "Tandem" %} selected {%endif%}>Tandem</option>
+              <option value="Offset" {% if det.disposicion_cuerpos == "Offset" %} selected {%endif%}>Offset</option>
+            </select>
+          </p>
+          {%elif forma == "sembradora"%}
+          <p>
+            <label for="id_tipo">Tipo de Distribución de la Semilla:</label>
+            <select name="tipo" class="form-control" id="id_tipo" disabled>
+              <option value="Voleo" {% if det.tipo == "Voleo" %} selected {%endif%}>De Voleo</option>
+              <option value="Chorrillo" {% if det.tipo == "chorrillo" %} selected {%endif%}>A Chorrillo</option>
+              <option value="Precision" {% if det.tipo == "Precision" %} selected {%endif%}>De Precisión</option>
+              <option value="Monograno" {% if det.tipo == "Monograno" %} selected {%endif%}>Monograno</option>
+            </select>            
+          </p>
+          <p>
+            <label for="id_fertilizadora">¿Tiene Fertilizadora?:</label>
+            <select name="fertilizadora" id="id_fertilizadora" disabled class="form-control">
+              <option value="True" {% if det.fertilizadora %} selected {% endif %}>Si</option>
+              <option value="False" {% if det.fertilizadora == False %} selected {% endif %}>No</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_no_tolvas">Número de tolvas:</label>
+            <input type="number" name="no_tolvas" class="form-control" min="1" required="" id="id_no_tolvas" disabled  value="{{det.no_tolvas}}">
+          </p>
+          <p>
+            <label for="id_neumatica_mecanica">Tipo de Dosificador:</label>
+            <select name="neumatica_mecanica" class="form-control" id="id_neumatica_mecanica" disabled>
+              <option value="neumatica" {% if det.neumatica_mecanica == "neumatica" %} selected {%endif%}>Neumático</option>
+              <option value="mecanica" {% if det.neumatica_mecanica == "mecanica" %} selected {%endif%}>Mecánico</option>
+            </select>
+          </p>
+          {% elif forma == "pulverizadora"%}
+          <p>
+            <label for="id_autopropulsada">¿Es Autopropulsada?</label>
+            <select name="autopropulsada" id="id_autopropulsada" disabled class="form-control">
+              <option value="True" {% if det.autopropulsada %} selected {% endif %}>Si</option>
+              <option value="False" {% if det.autopropulsada == False %} selected {% endif %}>No</option>
+            </select>
+          </p>
+          <p>
+            <label for="id_tamaño_tanque">Capacidad del Tanque (Litros):</label>
+            <input type="number" name="tamaño_tanque" class="form-control" min="1" required="" id="id_tamaño_tanque" value="{{det.tamaño_tanque}}" disabled>
+          </p>
+          <p>
+            <label for="id_no_boquillas">Número de Boquillas:</label>
+            <input type="number" name="no_boquillas" class="form-control" min="1" required="" id="id_no_boquillas" disabled value="{{det.no_boquillas}}">
+          </p>
+          <p>
+            <label for="id_capacidad_bomba">Caudal de la Bomba (litros/min):</label>
+            <input type="number" name="capacidad_bomba" class="form-control" min="1" required="" id="id_capacidad_bomba" disabled value="{{det.capacidad_bomba}}">
+          </p>
+          {% elif forma == "cosechadora" %}
+          <p>
+            <label for="id_tipo_cultivo">Tipo de Cabezal:</label>
+            <input type="text" name="tipo_cultivo" class="form-control" required="" id="id_tipo_cultivo" disabled value="{{det.tipo_cultivo}}">
+          </p>
+          <p>
+            <label for="id_potencia">Potencia del motor (HP):</label>
+            <input type="number" name="potencia" class="form-control" min="1" required="" id="id_potencia" disabled value="{{det.potencia}}">
+          </p>
+          <p>
+            <label for="id_capacidad_granos">Capacidad de almacenaje:</label>
+            <input type="number" name="capacidad_granos" class="form-control" min="1" required="" id="id_capacidad_granos" disabled value="{{det.capacidad_granos}}">
+          </p>
+          <p>
+            <label for="id_tasa_descarga">Velocidad de descarga (L/s):</label>
+            <input type="number" name="tasa_descarga" class="form-control" min="1" required="" id="id_tasa_descarga" disabled value="{{det.tasa_descarga}}">
+          </p>
+          {% endif %}
+        </form>
+      </div>
+      <div class="derecha">
+        <button class="btn " type="button" id = "btn-especificos">
+            Editar Datos Especificos
+            <i class="fa  fa-pencil-square-o" aria-hidden="true"></i>
+        </button>
+      </div>
+      <hr>
+      <div class="row my-3">
+        <span class="center">
+          <h2><u>Galeria de Imágenes</u></h2>
+        </span>        
+        <img  class = "fit-vista" alt= "Imagen" src = "{{ img.first.imageURL }}">
+      </div>
+      <hr>
+      <div class="row mt-2">
+        <span class="center">
+          <h2><u>Historial de Transacciones</u></h2> 
+        </span>
+        <div class = "card-body center" id = "txt-uno">
+          {% if transacciones == "na"%}
+          <h2>Este equipo no tiene transacciones.</h2>
+          {%else%}
+          <table class="table table-hover">
+              <thead>
+              <tr>
+                  <th scope="col">Arrendatario</th>
+                  <th scope="col">Fechas</th>
+                  <th scope="col">Costo (MXN)</th>
+                  <th></th>
+              </tr>
+              </thead>
+              <tbody id = "num">
+              {% for trnsc in transacciones %}
+              <tr>  
+                  <td>{{trnsc.id_arrendatario}}</td>
+                  <td>{{trnsc.fecha_inicial|date:"d/m/Y"}} - {{trnsc.fecha_final|date:"d/m/Y"}}</td>
+                  <td>{{trnsc.importe_total|floatformat:0|intcomma}}</td>
+                  <td> 
+                      <a class = "btn btn-outline-success" href="/mi_cuenta/mis_tr/{{trnsc.id_transaccion}}">Más Información</a>
+                  </td>
+              </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+          {% endif %}
+      </div>
+    </div>
     </div>
   </div>
+  <div class="row justify-content-between my-3">
+    <div class="col-2">
+      <a href = "/mi_cuenta/mis_equipos" class="btn btn-white" style="font-size: 1.3rem;"><i class="fa fa-arrow-left" aria-hidden="true">  Regresar </i></a>
+    </div>
+    <div class="col-2">
+      <button class="btn btn-danger" id = "drZ">
+        <i class="fa fa-trash-o fa-lg"></i> Eliminar Equipo
+      </button>
+    </div>
+  </div>
+</div>
+{% if messages %}
+   <script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+   </script>
+{% endif %}
+<script type="text/javascript" src="{%static 'js/detalles_equipo_dueño.js'%}"></script>
+
 
 {% endblock content %}
+
+
+

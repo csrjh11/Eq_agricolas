@@ -8,12 +8,13 @@ const dateDropdown = document.getElementById('año');
 const listaEstados = document.getElementById("estado");
 const listaMunicipios = document.getElementById("municipio");
 const etiquetaMunicipio = document.getElementById("labelM");
+const listaPq = document.getElementById("para_que")
 
 let currentYear = new Date().getFullYear();
 let earliestYear = 1970;
 let cntr = 0;
-const arrEstados = ["Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","Ciudad de México","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","México","Michoacán",
-"Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"]
+const arrEstados = ["Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila de Zaragoza","Colima","Chiapas","Chihuahua","Ciudad de México","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco",
+"Estado de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"]
 const prE = [
     ["Aguascalientes","Asientos","Calvillo","Cosío","Jesús María","Pabellón de Arteaga","Rincón de Romos","San José de Gracia","Tepezalá","El Llano","San Francisco de los Romo"],
     ["Ensenada","Mexicali","Tecate","Tijuana","Playas de Rosarito","San Quintín"],
@@ -49,18 +50,24 @@ const prE = [
     ["Abalá","Acanceh","Akil","Baca","Bokobá","Buctzotz","Cacalchén","Calotmul","Cansahcab","Cantamayec","Celestún","Cenotillo","Chacsinkín","Chankom","Chapab","Chemax","Chichimilá","Chicxulub Pueblo","Chikindzonot","Chocholá","Chumayel","Conkal","Cuncunul","Cuzamá","Dzán","Dzemul","Dzidzantún","Dzilam de Bravo","Dzilam González","Dzitás","Dzoncauich","Espita","Halachó","Hocabá","Hoctún","Homún","Huhí","Hunucmá","Ixil","Izamal","Kanasín","Kantunil","Kaua","Kinchil","Kopomá","Mama","Maní","Maxcanú","Mayapán","Mérida","Mocochá","Motul","Muna","Muxupip","Opichén","Oxkutzcab","Panabá","Peto","Progreso","Quintana Roo","Río Lagartos","Sacalum","Samahil","San Felipe","Sanahcat","Santa Elena","Seyé","Sinanché","Sotuta","Sucilá","Sudzal","Suma","Tahdziú","Tahmek","Teabo","Tecoh","Tekal de Venegas","Tekantó","Tekax","Tekit","Tekom","Telchac Pueblo","Telchac Puerto","Temax","Temozón","Tepakán","Tetiz","Teya","Ticul","Timucuy","Tinum","Tixcacalcupul","Tixkokob","Tixmehuac","Tixpéhual","Tizimín","Tunkás","Tzucacab","Uayma","Ucú","Umán","Valladolid","Xocchel","Yaxcabá","Yaxkukul","Yobaín"],
     ["Apozol","Apulco","Atolinga","Benito Juárez","Calera","Cañitas de Felipe Pescador","Chalchihuites","Concepción del Oro","Cuauhtémoc","El Plateado de Joaquín Amaro","El Salvador","Fresnillo","Genaro Codina","General Enrique Estrada","General Francisco R. Murguía","General Pánfilo Natera","Guadalupe","Huanusco","Jalpa","Jerez","Jiménez del Teul","Juan Aldama","Juchipila","Loreto","Luis Moya","Mazapil","Melchor Ocampo","Mezquital del Oro","Miguel Auza","Momax","Monte Escobedo","Morelos","Moyahua de Estrada","Nochistlán de Mejía","Noria de Ángeles","Ojocaliente","Pánuco","Pinos","Río Grande","Sain Alto","Santa María de la Paz","Sombrerete","Susticacán","Tabasco","Tepechitlán","Tepetongo","Teúl de González Ortega","Tlaltenango de Sánchez Román","Trancoso","Trinidad García de la Cadena","Valparaíso","Vetagrande","Villa de Cos","Villa García","Villa González Ortega","Villa Hidalgo","Villanueva","Zacatecas"]
     ]
+
+//Componentes Sliders
 const sliderUno = document.getElementById("slider-1");
 const sliderDos = document.getElementById("slider-2");
 const valorUno = document.getElementById("rango1");
 const valorDos = document.getElementById("rango2");
 const inputUno = document.getElementById("f1");
 const inputDos = document.getElementById("f2");
+let valIntermedio = 0
+
+
+// Botones y opciones Filtros
 const btnSubmit = document.getElementById("btn-go");
 const laForma = document.getElementById("la-forma");
 const filtro = document.getElementById("filtro");
 const selectTipo = document.getElementById("tipo_equipo");
 const btnReset = document.getElementById("btn-reset");
-let valIntermedio = 0
+
 
 const slideOne = function(){
     if(parseInt(sliderDos.value) - parseInt(sliderUno.value) <= valIntermedio){
@@ -106,8 +113,8 @@ btnSubmit.addEventListener("click", function(){
 })
 
 btnReset.addEventListener("click", function(){
-    laForma.reset()
-    laForma.submit()
+    window.location.href = "/browse"
+
 })
 
 if (filtro.childNodes.length > 1){
@@ -116,12 +123,10 @@ if (filtro.childNodes.length > 1){
     let parseo = JSON.parse(filtroDos)
     console.log(parseo)
     if( parseo.hasOwnProperty("año__range")){
-        console.log("ola")
         sliderUno.value = parseo.año__range[0]
         sliderDos.value = parseo.año__range[1]
     }
     if(parseo.hasOwnProperty("tipo_equipo")){
-        console.log("helow")
         selectTipo.value = parseo.tipo_equipo
     }
     if(parseo.hasOwnProperty("ubicacion_base__estado")){
@@ -139,5 +144,9 @@ if (filtro.childNodes.length > 1){
             listaMunicipios.add(opMunicipio);
         })
         listaMunicipios.value = parseo.ubicacion_base__municipio
+    }
+    if(parseo.hasOwnProperty("para_que")){
+        listaPq.value = parseo. para_que
+
     }
 }

@@ -1,3 +1,4 @@
+from urllib.parse import urldefrag
 from PIL import Image
 from django.contrib.auth.models import User
 from django.db.models.query import RawQuerySet
@@ -6,7 +7,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.core.exceptions import PermissionDenied
 from .forms import FormaArado, FormaEquipo, FormaPulverizadora, FormaRastra, FormaTractor, Forma_Imagen, Forma_Registro_Usuario, Forma_Registro_Ubicacion, Forma_Datos_Interesado, FromaCosechadora, FromaSembradora, Forma_Edicion_Ubicacion
-from django.http import JsonResponse, request
+from django.http import JsonResponse
 from .models import Arado, Cosechadora, Equipo, Imagen, Pulverizadora, Rastra, Sembradora, Solicitud, Ubicacion, Usuario, Tractor, Transaccion, Conversacion, Mensaje
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
@@ -97,7 +98,6 @@ modelos = {
   },
   "Otra" :[]
 }
-arf = "RRRRR"
 
 dic_formas = {
     "tractor": FormaTractor,
@@ -168,21 +168,35 @@ def pruebas_html(request):
     lista_usuarios = []
     lista_ub = []
     lista_puntos = []
-    for i in range(1000):
+
+    el_ult = User.objects.all()
+    ultimo_usr = el_ult.count() - 5
+
+
+    for i in range(1500):
         gp = genera_punto()
         while not gp[0]:
             gp = genera_punto()
         punto = gp[1]
         lista_puntos.append(punto)
     if request.method == "POST":
-        
+
+        datos = request.POST.dict()
+        coordenadas = datos["ubi"]
+        lugares = datos["datos"]
+        lista_coordenadas = list(coordenadas.split(","))
+        lista_coo = list(lugares.split(","))
+        rango = int ((len(lista_coo) -1) /2)
+        print(rango)
+
         #Creación de USER 
-        for i in range(1000):
-            cont = "ContraUs" + str(i)
+        for i in range(rango):
+            cont = "ContraUs" + str( ultimo_usr + i)
+            
             obj = User.objects.create_user(
             # obj = User(
-                username = "usuario" + str(i+1),
-                email = "correousuario" + str(i+1) + "@correos.com",
+                username = "usuario"  + str( ultimo_usr +(i+1)),
+                email = "correousuario" + str(ultimo_usr +(i+1)) + "@correos.com",
                 password = cont,
             )
             obj.is_staff = False
@@ -201,7 +215,8 @@ def pruebas_html(request):
             lista_usuarios.append(usuario)
 
         #Creación de UBICACIÓN
-        for i in range(len(lista_usuarios)):
+
+        for i in range(len(lista_usuarios)):            
             ltr = random.choice(letras) + random.choice(letras)
             ultimo = Ubicacion.objects.count()
             if ultimo == None:
@@ -214,16 +229,13 @@ def pruebas_html(request):
                 id_usuario = lista_usuarios[i],
                 alias = "Parcela 1",
                 referencias = "Pequeña parcela en",
-                coord_x = lista_puntos[i][0],
-                coord_y = lista_puntos[i][1]
+                coord_x = lista_coordenadas[i * 2],
+                coord_y = lista_coordenadas[(i * 2) + 1]
             )
             nueva_ub.save()
             lista_ub.append(nueva_ub)
-
-        for i in range(len(lista_ub)):
-            datos = request.POST.dict()
-            lugares = datos["datos"]
-            lista_coo = list(lugares.split(","))
+        
+        for i in range(len(lista_ub)):         
             lista_ub[i].municipio = lista_coo[i * 2]
             lista_ub[i].estado = lista_coo[(i * 2) + 1]
             lista_ub[i].referencias = f"Pequeña parcela en {lista_ub[i].municipio}, {lista_ub[i].estado}"
@@ -286,7 +298,7 @@ def pruebas_html(request):
                 )
                 el_t.save()
             elif tipo == "sembradora":
-                tp = random.choice(["Voleo", "Chorrillo", "Monograno"])
+                tp = random.choice(["Voleo", "Chorrillo", "Monograno", "Precision"])
                 no_tolv = random.choice([8,16,24,32])
                 neu_m = random.choice(["neumatica", "mecanica"])
                 el_t = Sembradora(
@@ -364,18 +376,27 @@ def pruebas_html(request):
             )
             la_imagen.save()
         print("YA")
-
-
-
     return render(request, "tes2/pruebas.html", context = {"ubicacion" : lista_puntos})
 
 
 def pagina_principal(request):
     user = request.user
-    print(user)
-    print(user.is_authenticated)
+    if request.method == "POST":
+        datos = request.POST.dict()
+        usuario = datos["usuario"]
+        cont = datos["contraseña"]
+
+        usuario_aut = authenticate(username = usuario, password = cont)
+        if usuario_aut is not None:
+            if usuario_aut.is_authenticated:
+                login(request, usuario_aut)
+                return redirect("mi-cuenta")
+        else:
+            return render(request, "tes2/index.html", context = {"msj":"si"})
+
     if user.is_authenticated:
         return render(request, "tes2/index_login.html")
+
     return render(request, "tes2/index.html", context = {"user":user})
 
 
@@ -385,6 +406,10 @@ def creacion_equipo(request):
     usuario = Usuario.objects.get(id_usuario = user)
     if user.is_anonymous:
         raise PermissionDenied
+    try:
+        Ub_usr = Ubicacion.objects.filter(id_usuario = usuario).exclude(eliminado = True)
+    except:
+        return render(request, "tes2/sin_ub.html")
     ltr = random.choice(letras) + random.choice(letras)
     ultimo = Equipo.objects.count()
     if ultimo == None:
@@ -392,7 +417,6 @@ def creacion_equipo(request):
     else:
         ultimo += 1
     id_f = str(ultimo) + ltr
-    Ub_usr = Ubicacion.objects.filter(id_usuario = usuario).exclude(eliminado = True)
     context = {
         "ubicaciones":Ub_usr
     }
@@ -417,16 +441,27 @@ def mapa(request):
 
 #Genera un Json para AJAX en busqueda de equipos
 def lista_equipos(request):
-    qs = Equipo.objects.all()
-    print(qs)
-    lista_equipo = [{
-        # "dueño": x.id_dueño.,
-        "nombre": x.nombre_equipo,
-        "marca": x.marca,
-        "modelo": x.modelo,
-        # "donde": x.donde_esta,
-        }
-        for x in qs]
+    lista_equipo = []
+    usu = request.user
+    qs = Equipo.objects.exclude(status = "eliminado")
+    if usu.is_authenticated:
+        qs = Equipo.objects.exclude(id_dueño = usu)
+    for q in qs:
+        ub = Ubicacion.objects.get(id_ubicacion = q.ubicacion_base.id_ubicacion)
+        lista_equipo.append({
+        "nombre":  q.nombre_equipo,
+        "marca": q.marca,
+        "modelo": q.modelo,
+        "estado": ub.estado,
+        "tipo_eq": q.tipo_equipo,
+        "municipio": ub.municipio,
+        "coord_x": ub.coord_x,
+        "coord_y": ub.coord_y,
+        "precio_venta": q.precio_venta,
+        "precio_renta_dia": q.precio_renta_dia,
+        "num": q.num_equipo,
+        })
+
     data = {
         "response": lista_equipo
     }
@@ -463,7 +498,6 @@ def busq_principal(request):
     llaves = request.GET.dict()
     filtro = {}
     context = {}
-    print(llaves)
     url = ""
     for llave in llaves:
         url += llave + "=" + llaves[llave] + "&"
@@ -478,22 +512,32 @@ def busq_principal(request):
     for llave in llaves:
         if llaves[llave]:
             filtro[llave] = llaves[llave]
-    print(filtro)
     equipos = Equipo.objects.exclude(status = "eliminado")
     if filtro:
-        equipos = equipos.filter(**filtro)
+        if "para_que" in filtro:
+            exc = filtro["para_que"]
+            del filtro["para_que"]
+            equipos = equipos.filter(**filtro)
+            equipos = equipos.exclude(para_que = exc)
+            filtro["para_que"] = exc
+        else:
+            equipos = equipos.filter(**filtro)
         context["filtro"] = filtro
     if usr.is_authenticated:
         equipos = equipos.exclude(id_dueño = usr)
-    equipos_Pag = Paginator(equipos, 40)
+    equipos_Pag = Paginator(equipos, 33)
     los_equipos_pag = equipos_Pag.get_page(pagina)
     lista_eq = [x.num_equipo for x in los_equipos_pag]
     imagenes= Imagen.objects.filter(id_equipo__in = lista_eq).filter(es_principal = True)
-    print(lista_eq)
-    print(imagenes)
     context["imagenes"] = imagenes
     context["equipos"] = los_equipos_pag
     return render(request, "tes2/lista_equipos.html", context)
+
+#Busqueda por Mapa
+def busqueda_mapa(request):
+    return render(request, "tes2/busqueda_mapa.html")
+
+
 
 
 #Vista de detalle de un equipo, para publico general
@@ -563,7 +607,6 @@ def datos_interesado(request):
     print(usr)
     busq = Usuario.objects.filter(id_usuario = usr.id)
     if busq.exists():
-        print("Ya existe!")
         return redirect("Pagina Principal")
     if usr.is_anonymous:
         return redirect("Pagina Principal")
@@ -644,6 +687,7 @@ def renta_inicial(request, num_eq):
     if request.method == "POST":
         d_post = request.POST.dict()
         print(d_post)
+        comenta = d_post["comentario"]
         el_eq = equipo[0]
         precio = d_post["precio"]
         fs = d_post["f-inicial"].split("/")
@@ -657,13 +701,15 @@ def renta_inicial(request, num_eq):
             id_dueño_eq         = usuario,
             tipo_operacion      = "renta",
             a_donde             = a_dnd[0],
-            desde_donde         = el_eq.donde_esta,
+            desde_donde         = el_eq.ubicacion_base,
             fecha_solicitud     = hoy,
             fecha_inicio        = fecha_inicial,
             fecha_final         = fecha_fin,
             estatus             = "1",
             costo               = precio,
-            tipo_solicitud      = 1
+            tipo_solicitud      = 1,
+            comentario          = comenta,
+            quien_manda         = interesado,
             )
         sol.save()
         return redirect("noti")
@@ -689,15 +735,19 @@ def solicitudes_usuario(request):
     if usr.is_anonymous:
         raise PermissionDenied
     el_usu = Usuario.objects.get(id_usuario = usr)
-    soli = Solicitud.objects.filter(id_dueño_eq = el_usu).filter(estatus = "1")
-    otras_sol = Solicitud.objects.filter(id_solicitante = el_usu).filter(estatus = "1")
+    soli = Solicitud.objects.filter(id_dueño_eq = el_usu).filter(estatus = "1").filter(tipo_solicitud = 1)
+    otras_sol = Solicitud.objects.filter(id_solicitante = el_usu).filter(estatus = "1").filter(tipo_solicitud = 1)
+    sol_abiertas = Solicitud.objects.filter(id_solicitante = el_usu).filter(estatus = "1").filter(tipo_solicitud = 2)
     if soli.count() == 0:
         soli = "na"
     if otras_sol.count() == 0:
         otras_sol = "na"
+    if sol_abiertas.count() == 0:
+        sol_abiertas = "na"
     context = {
         "solicitudes":   soli,
         "otras": otras_sol,
+        "abiertas": sol_abiertas,
     }
     return render(request, "tes2/notificaciones.html", context)
 
@@ -706,10 +756,13 @@ def solicitudes_especificas(request, id_sol):
     usr = request.user
     if usr.is_anonymous:
         raise PermissionDenied
+    usuario = Usuario.objects.get(id_usuario = usr)
     sol = Solicitud.objects.select_related("id_solicitante").select_related("id_equipo").filter(id_solicitud = id_sol)
+    imagenes = Imagen.objects.filter(id_equipo = sol[0].id_equipo)
     la_sol = sol[0]
     context = {
         "sol" : la_sol,
+        "img" : imagenes,
     }
     if request.method == "POST":
         si_no = request.POST.dict()
@@ -741,7 +794,11 @@ def solicitudes_especificas(request, id_sol):
         la_sol.save()
         print (sol[0].estatus)
         return redirect("noti")
-    return render(request, "tes2/notif_especifica.html", context)
+    if usuario == sol[0].quien_manda:
+        return render(request, "tes2/solicitud_especifica_usuario.html", context)
+    else:
+        return render(request, "tes2/solicitud_especifica_dueño.html", context)
+        
 
 def crea_conversa(tr):
     n_co = Conversacion(
@@ -772,6 +829,8 @@ def lista_transacciones_usuario(request):
         "tr_mias" : tr_mis_equipos_activos,
         "tr_renta": tr_yo_rento_activos,
     }
+    print(tr_mis_equipos_activos)
+    print(tr_yo_rento_activos)
     if tr_mis_equipos_activos.count() == 0:
         context["tr_mias"] = "nh"
     if tr_yo_rento_activos.count() == 0:
@@ -803,7 +862,6 @@ def ubicacion_especifica(request, id_ub):
     if request.method == "POST":
         dts = request.POST.dict()
         del dts['csrfmiddlewaretoken']
-        print(dts)
         for key, value in dts.items():
             setattr(ubic, key, value)
         ubic.save()
@@ -906,20 +964,46 @@ def cancela_transaccion(request, id_tr):
 #Vista de detalle de un equipo para el dueño
 def vista_eq_usuario(request, id_eq):
     usr = request.user
+    usuario = Usuario.objects.get(id_usuario = usr)
     if usr.is_anonymous:
         raise PermissionDenied
-    el_eq = Equipo.objects.filter(num_equipo = id_eq).select_related("donde_esta")
-    detalle = dic_tablas[el_eq[0].tipo_equipo].objects.get(id_equipo= id_eq)
-    tabla_detalle = dic_formas[el_eq[0].tipo_equipo]
+    el_eq = Equipo.objects.get(num_equipo = id_eq)
+    detalle = dic_tablas[el_eq.tipo_equipo].objects.get(id_equipo= id_eq)
+    tabla_detalle = el_eq.tipo_equipo
+    tbd = Transaccion.objects.filter(id_equipo = el_eq)
+    ubicaciones_usuario = Ubicacion.objects.filter(id_usuario = usuario)
+    if len(tbd) == 0:
+        tbd = "na"
     imagenes = Imagen.objects.filter(id_equipo = id_eq)
-    if usr != el_eq[0].id_dueño:
+    if usr != el_eq.id_dueño:
         raise PermissionDenied
     context = {
-        "equipo":el_eq[0],
+        "equipo":el_eq,
         "img": imagenes,
         "det": detalle,
         "forma": tabla_detalle,
+        "transacciones": tbd,
+        "ubicaciones" : ubicaciones_usuario,
     }
+    if request.method == "POST":
+        diccionario_datos = request.POST.dict()
+        del diccionario_datos['csrfmiddlewaretoken']
+        la_fr = diccionario_datos["id_forma"]
+        del diccionario_datos["id_forma"]
+        if la_fr == "forma_especifica":
+            for key,val in diccionario_datos.items():
+                setattr(detalle, key, val)
+            detalle.save()
+            messages.success(request, 'Equipo Editado Satisfactoriamente.')
+            return redirect(f"/mi_cuenta/equipos/{id_eq}")
+        else:
+            ub  = ubicaciones_usuario.get(alias = diccionario_datos["ubicacion_base"])
+            diccionario_datos["ubicacion_base"] = ub
+            for key, value in diccionario_datos.items():
+                setattr(el_eq, key, value)
+            el_eq.save()
+            messages.success(request, 'Equipo Editado Satisfactoriamente.')
+            return redirect(f"/mi_cuenta/equipos/{id_eq}")
     return render(request, "tes2/detalles_equipo_dueño.html", context)
 
 
@@ -996,3 +1080,60 @@ def nuevo_msj(request, id_conv):
         nuevo_mensaje.save()
     data = {"reponse" : {}}
     return JsonResponse(data)
+
+
+def respuesta_sol_eq(request, id_sol):
+    usr = request.user
+    usua = Usuario.objects.get(id_usuario = usr)
+    solicitud_e = Solicitud.objects.get(id_solicitud = id_sol)
+    if usua == solicitud_e.quien_manda or not usr.is_authenticated or (usua != solicitud_e.id_solicitante and usua != solicitud_e.id_dueño_eq):
+        raise PermissionDenied
+    imagen_equipo_solicitud = Imagen.objects.get(id_equipo = solicitud_e.id_equipo)
+    equipos_usuario = Equipo.objects.filter(id_dueño =usr, tipo_equipo = solicitud_e.id_equipo.tipo_equipo)
+    if equipos_usuario.count() == 1:
+        equipos_usuario = "na"
+    context = {
+        "sol": solicitud_e,
+        "img_equipo": imagen_equipo_solicitud,
+        "eqiupos_usuario": equipos_usuario,
+    }
+    if request.method == "POST":
+        datos = request.POST.dict()
+        print(datos)
+
+    
+    return render(request, "tes2/respuesta_solicitud.html", context)
+
+def solicitud_abierta_inicial(request):
+    usr = request.user
+    id_sol = Usuario.objects.filter(id_usuario = request.user)
+    print(id_sol)
+    usuario_s = Usuario.objects.get(id_usuario = usr)
+    ubicaciones = Ubicacion.objects.filter(id_usuario = usuario_s)
+    context = {
+        "ubicaciones":ubicaciones
+    }
+    if request.method == "POST":
+        d_post = request.POST.dict()
+        print(d_post)
+        comenta = d_post["comentario"]
+        a_dnd = Ubicacion.objects.filter(alias = d_post["a_donde"]).filter(id_usuario = usuario_s)
+        sol = Solicitud(
+            id_solicitante      = id_sol[0],
+            tipo_operacion      = "renta",
+            a_donde             = a_dnd[0],
+            fecha_solicitud     = hoy,
+            estatus             = "1",
+            tipo_solicitud      = 2,
+            comentario          = comenta,
+            quien_manda         = usuario_s,
+            )
+        
+        return redirect("noti")
+    return render(request, "tes2/sol_abiertas_inicial.html", context)
+
+def solicitudes_abiertas(request):
+    return
+
+
+

@@ -54,6 +54,7 @@ class Mapa{
         }        
         const equis = event.latlng.lat
         const ye = event.latlng.lng
+        console.log(typeof(ye))
         this.#marcador = L.marker([equis, ye], {"draggable": true})
         this.#mapa.addLayer(this.#marcador)
 

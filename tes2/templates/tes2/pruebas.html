@@ -4,51 +4,57 @@
 {% block content %}
 <form class = "form" method = "POST" id = "forma-datos"> {% csrf_token %}
     <input type="hidden" value = "" name = "datos" id ="datos">
+    <input type="hidden" value = "" name = "ubi" id ="ubi">
+
 </form>
 
 <button id = "asigna">Dale</button>
 
 <script type="text/javascript">
     const listaMun = []
+    const listaCoords = []
 
     const lasUb = {{ubicacion}}
+    console.log(lasUb)
 
 
     const datos_dir= async function(ubicacion){
         const llAPI = "AIzaSyA6BgqA2oKejfHVnFodwFPmIDJZDIH6YeE"
         const respo = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${ubicacion}&key=${llAPI}`)
         const jsonR = await respo.json()
-        console.log(jsonR)
         let elIndex = jsonR.results.map( res => res.types).findIndex(areg => areg.includes("administrative_area_level_2"))
-        console.log(elIndex)
         if (elIndex == -1){
             elIndex = jsonR.results.map( res => res.types).findIndex(areg => areg.includes("administrative_area_level_3"))
         }
         const municipio = jsonR.results[elIndex].address_components[0].long_name
         const estado = jsonR.results[elIndex].address_components[1].long_name
         listaMun.push([municipio, estado])
+        listaCoords.push(ubicacion)
+
+
+
 
         console.log(municipio, estado)
+        datos.value = listaMun;
+        ubicaciones.value = listaCoords;
+
     }
 
-    lasUb.forEach( ub => {
-        datos_dir(ub)
+    lasUb.forEach(async function(ub){
+        await datos_dir(ub)
         console.log(listaMun)
-    })
-
+        console.log(listaCoords)
+    })   
     const boton = document.getElementById("asigna");
     const forma = document.getElementById("forma-datos")
     const datos = document.getElementById("datos")
+    const ubicaciones = document.getElementById("ubi")
 
-    boton.addEventListener("click", function(){
-        datos.value = listaMun;
+    boton.addEventListener("click",function(){
         forma.submit()
     })
 
-
 </script>
-
-
 
 
 {% endblock content %}

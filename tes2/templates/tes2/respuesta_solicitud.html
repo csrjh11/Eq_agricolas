@@ -1,0 +1,244 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+{% load humanize %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-around">
+        <div class="col-4">
+            <div class="row center">
+                <h3><u>Solicitud Inicial</u></h3>
+                <hr>
+            </div>
+            <div class="row" id = "target-eq">
+                <div class="col-10">
+                    <h3>Equipo No. {{sol.id_equipo.num_equipo}}</h3>
+                    <h4>"{{sol.id_equipo|capfirst}}"</h4>
+                </div>
+                <div class="col-2">
+                    <button class = "btn btn-secondary" id ="btnEquipo">Ver Equipo</button>
+                </div>          
+                <hr>
+            </div>
+            <div class="row center mb-2">
+                <h3>Fechas</h3>
+                <div class="col-6 vertical">
+                    <h4>Inicio:</h4>
+                    <h4>{{sol.fecha_inicio|date:"d/m/Y"}}</h4>
+                </div>
+                <div class="col-6">
+                    <h4>Final:</h4>
+                    <h4>{{sol.fecha_final|date:"d/m/Y"}}</h4>
+                </div>
+            </div>
+            <hr>
+            <div class="row center">
+                <h3>Costo Total de la Operación</h3>
+                <h4>${{sol.costo|intcomma}}</h4>
+                <hr>
+            </div>
+            <div class="row">
+                <span class="center">
+                    <h3>Comentario</h3>
+                </span>
+                <textarea disabled rows="4" >{{sol.comentario}}</textarea>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="row center">
+                <h3><u>Solicitud Modificada</u></h3>
+                <hr>
+            </div>
+            <div class="row" id = "target-eq">
+                <div class="col-10">
+                    <h3>Equipo No. {{sol.id_equipo.num_equipo}}</h3>
+                    <h4>"{{sol.id_equipo|capfirst}}"</h4>
+                </div>
+                <div class="col-2">
+                    <button class = "btn btn-secondary" id ="btnCambioEq">Cambiar Equipo</button>
+                </div>          
+                <hr>
+            </div>
+            <div class="row center mb-2">
+                <div class="col-10">
+                    <div class="row center"><h3>Fechas</h3></div>
+                    <div class="row">
+                        <div class="col-6 vertical">
+                            <h4>Inicio:</h4>
+                            <h4 id = "fecha-i-display">{{sol.fecha_inicio|date:"d/m/Y"}}</h4>
+                        </div>
+                        <div class="col-6">
+                            <h4>Final:</h4>
+                            <h4 id = "fecha-f-display">{{sol.fecha_final|date:"d/m/Y"}}</h4>
+                        </div>
+                    </div>                   
+                </div>
+                <div class="col-2">
+                    <button class = "btn btn-secondary" id ="btn-fechas">Cambiar Fechas</button>
+                </div>
+            </div>
+            <hr>
+            <div class="row center">
+                <div class="col-10">
+                    <h3>Costo Total de la Operación</h3>
+                    <h4 id = "costo-display">${{sol.costo|intcomma}}</h4>
+                </div>
+                <div class="col-2">
+                    <button class = "btn btn-secondary" id ="btn-costo">Cambiar Costo</button>
+                </div>
+                <hr>
+            </div>
+            <div class="row">
+                <form id = "forma-sol" method="post">{% csrf_token %}
+                    <span class="center">
+                        <h3>Comentario</h3>
+                    </span>
+                    <textarea name = "comentario" placeholder="Escriba un Comentario" rows="4" cols = "54"></textarea>
+                    <input type="hidden" name = "fecha_inicio" value = "{{sol.fecha_inicio}}" id = "in-fecha-i">
+                    <input type="hidden" name = "fecha_final" value = "{{sol.fecha_final}}" id = "in-fecha-f">
+                    <input type="hidden" name = "costo" value = "{{sol.costo}}" id = "in-costo">
+                </form>
+
+                <hr>
+            </div>
+            <div class="row">
+                <button class = "btn btn-primary" id = "btn-go"> Enviar Respuesta</button>
+                <a class = "btn btn-danger" href = "/mis_solicitudes/{{sol.id_solicitud}}">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ----------------------------------------------------------------------- MODALES ----------------------------------------------------------------->
+<!-- Modal Vista del Equipo -->
+<div class="overlay hidden" id = "modal-equipo">
+    <div class="modal-solicitud">
+        <div class="container">
+            <div class="row m-3">
+              <div class="col-6">
+                <img  class = "fit-vista"alt= "Imagen" src = "{{ img.first.imageURL }}">
+              </div>
+              <div class="col-4 brd mx-1">
+                  <h1>{{sol.id_equipo.que_es}} {{sol.id_equipo.marca}} {{sol.id_equipo.modelo}}</h1>
+                  <hr>
+                  <h3>Año: {{sol.id_equipo.año}}</h3>
+                  <h4>{{sol.id_equipo.descripcion}}</h4>
+                  <hr>
+              </div>
+              <div class="col brd">
+                {%if sol.id_equipo.para_que == "ambos"%}
+                    <h4>Precio de Venta:</h4>
+                    <h4>${{sol.id_equipo.precio_venta}}</h4>
+                    <br>
+                    <h4>Precio de Renta:</h4>
+                    <h4>${{sol.id_equipo.precio_renta_dia}}</h4><br>
+                {%elif sol.id_equipo.para_que == "venta"%}
+                  <h4>Precio de Venta:</h4>
+                  <h4>${{sol.id_equipo.precio_venta}}</h4>
+                  <br>
+                {%else%}
+                  <h4>Precio de Renta:</h4>
+                  <h4>${{sol.id_equipo.precio_renta_dia}}</h4>
+                  <br>
+                {% endif%}
+              </div>
+            </div>
+        </div>
+        <div style="float: right; display: inline;" class="my-1">
+            <button class="btn btn-danger" type="button" id = "btn-cerrar-equipo">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Selección del Equipo -->
+<div class="overlay hidden" id = "modal-sel-equipo">
+    <div class="modal-solicitud">
+        <div class="container">
+            <div class="row m-3">
+              <div class="col-6">
+                <img  class = "fit-vista"alt= "Imagen" src = "{{ img.first.imageURL }}">
+              </div>
+              <div class="col-4 brd mx-1">
+                  <h1>{{sol.id_equipo.que_es}} {{sol.id_equipo.marca}} {{sol.id_equipo.modelo}}</h1>
+                  <hr>
+                  <h3>Año: {{sol.id_equipo.año}}</h3>
+                  <h4>{{sol.id_equipo.descripcion}}</h4>
+                  <hr>
+              </div>
+              <div class="col brd">
+                {%if sol.id_equipo.para_que == "ambos"%}
+                    <h4>Precio de Venta:</h4>
+                    <h4>${{sol.id_equipo.precio_venta}}</h4>
+                    <br>
+                    <h4>Precio de Renta:</h4>
+                    <h4>${{sol.id_equipo.precio_renta_dia}}</h4><br>
+                {%elif sol.id_equipo.para_que == "venta"%}
+                  <h4>Precio de Venta:</h4>
+                  <h4>${{sol.id_equipo.precio_venta}}</h4>
+                  <br>
+                {%else%}
+                  <h4>Precio de Renta:</h4>
+                  <h4>${{sol.id_equipo.precio_renta_dia}}</h4>
+                  <br>
+                {% endif%}
+              </div>
+            </div>
+        </div>
+        <div style="float: right; display: inline;" class="my-1">
+            <button class="btn btn-danger" type="button" id = "btn-cerrar-equipo">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Fechas-->
+
+<div class="overlay hidden " id = "modal-cambio-fechas">
+    <div class="modal-fechas">
+        <div class="container ">
+            <div class="row">
+                <div class="col">
+                    <div class="row my-3">
+                        <label for="fecha-inicial">Seleccione Nueva Fecha Inicial</label>
+                        <input type="date" value="" id = "fecha-incial-m" class = "form-control">
+                    </div>
+                    <div class="row">
+                        <label for="fecha-final">Seleccione Nueva Fecha Final</label>
+                        <input type="date" value="" id = "fecha-final-m" class = "form-control">
+                    </div>
+                    <div class="row my-3 ">
+                        <div class="col derecha">
+                            <button class = "btn btn-primary" id = "btn-c-fechas">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+Modal Costos
+<div class="overlay hidden " id = "modal-cambio-costo">
+    <div class="modal-fechas">
+        <div class="container ">
+            <div class="row">
+                <div class="col">
+                    <label for="costo">Seleccione Nuevo Costo Total</label>
+                    <input type="number" value="" id = "costo-modal" class = "form-control">
+                </div>
+            </div>
+            <div class="row my-3 ">
+                <div class="col derecha">
+                    <button class = "btn btn-primary" id = "btn-c-costo">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src = "{%static 'js/respuesta_solicitudes.js' %}"></script>
+
+{% endblock content %}

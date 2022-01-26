@@ -1,16 +1,19 @@
 {% extends "tes2/main.html" %}
 {% load static %}
-{% block links %}
-<link rel = "stylesheet" type = "text/css" href= "{% static 'css/estilo.css' %}">
+{% load humanize %}
 
-{% endblock links %}
 
 {% block content %}
 
 
 
 <div class="container-fluid">
-    <div class = "row">
+    <div class="row hh">
+        <div class="col derecha">
+            <a href="/browse_mapa" class = "btn btn-primary">Ir a Búsqueda por Ubicación</a>
+        </div>
+    </div>
+    <div class = "row hh">
         <div class="col-3">
             <form class = "form-control" id = "la-forma">
                 <label for="tipo_equipo" class = "center" >Tipo de Equipo</label>
@@ -36,8 +39,8 @@
                     </div>
                     <div class="container-sl">
                     <div class="slider-track"></div>
-                    <input type="range" min = 1975 max = 2021 value = "1975" id = "slider-1" oninput="slideOne()">
-                    <input type="range" min = 1975 max = 2021 value = "2021" id = "slider-2" oninput="slideTwo()">
+                    <input type="range" min = 1975 max = 2022 value = "1975" id = "slider-1" oninput="slideOne()">
+                    <input type="range" min = 1975 max = 2022 value = "2022" id = "slider-2" oninput="slideTwo()">
                     </div>
                 </div>
                 <br>
@@ -51,25 +54,85 @@
                 <select name = "ubicacion_base__municipio" id = "municipio" class ="form-control hidden">
                 </select>
                 <br>
+                <label for="para_que" class = "center" >Diponibilidad</label>
+                <select name = "para_que" id = "para_que" class ="form-control">
+                    <option value = "">Para Venta y Renta</option>
+                    <option value = renta>Venta</option>
+                    <option value = venta>Renta</option>
+                </select>
+                <br>
             </form>
-            <div id ="btn-reset" class ="inline">
+            <div id ="btn-reset" class ="inline my-3">
                 <button class="btn btn-primary">Eliminar filtros</button>
             </div>
-            <div class="der_elemento" id ="btn-go">
+            <div class="der_elemento my-3" id ="btn-go">
                 <button class="btn btn-primary">Buscar</button>
             </div>
+            <div class="row">
 
+            </div>
         </div>
         <div class="col-9">
-            <div class="row">
+            <div class="row justify-content-center">
+                {% if imagenes.count == 0 %}
+                <span class="center">
+                    <h3>No se encontraron Equipos con estas Especificaciones</h3>
+                </span>
+                <div class="col-6">
+                    <div id ="btn-reset" class ="inline my-3">
+                        <a class="btn btn-primary" href = "/browse">Eliminar filtros</a>
+                    </div>
+                    <div class="der_elemento my-3" >
+                        <a class="btn btn-success" href = "solicitudes_abiertas/gen">Generar una Solicitud Abierta</a>
+                    </div>
+                    <div class="row">
+                </div>
+                {% endif %}
+
+
+
                 {% for eq in imagenes %}
-                <div class = "col-4">
-                    <img class = "fit" src = "{{eq.imageURL}}"  alt="Imagen del Equipo">
-                    <div class = "box-element product">
-                        <h6><strong>{{ eq.id_equipo.tipo_equipo|title }} {{eq.id_equipo.marca}} {{eq.id_equipo.modelo}}</strong></h6>
-                        <hr>
-                        <a class = "btn btn-outline-success" href="/browse/{{eq.id_equipo.num_equipo}}">Más Información</a>
-                        <hr>
+                <div class = "col-4 p-1 my-1">
+                    <div class="brd">
+                        <img class = "fit" src = "{{eq.imageURL}}"  alt="Imagen del Equipo">
+                        <div class = "box-element">
+                            <h3><strong>{{ eq.id_equipo.tipo_equipo|title }} {{eq.id_equipo.marca}} {{eq.id_equipo.modelo}}</strong></h3>
+                            <hr>
+                            <div class="row">
+                                    {%if eq.id_equipo.para_que == "renta"%}
+                                    <div class="col-6">
+                                        <h4>Precio de renta/dia:</h4>
+                                        <h3>${{eq.id_equipo.precio_renta_dia|floatformat:0|intcomma}}</h3>
+                                    </div>  
+                                    {% elif eq.id_equipo.para_que == "ambos"%}
+                                    <div class="col-6">
+                                        <h4>Precio de renta/dia:</h4>
+                                        <h3>${{eq.id_equipo.precio_renta_dia |floatformat:0|intcomma}}</h3>
+                                    </div>  
+                                    <div class="col-6 derecha">
+                                        <h4>Precio de Venta</h4>
+                                        <h3>${{eq.id_equipo.precio_venta|floatformat:0|intcomma}}</h3>
+                                    </div>
+                                    {% else %}
+                                    <div class="col-6">
+                                        <h4>Precio de Venta</h4>
+                                        <h3>${{eq.id_equipo.precio_venta|floatformat:0|intcomma}}</h3>
+                                    </div>  
+
+                                    {% endif %}
+
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <h4>Ubicación:</h4>
+                                <h3>{{eq.id_equipo.donde_esta.municipio}}, {{eq.id_equipo.donde_esta.estado}}</h3>
+                            </div>
+                            <hr>
+
+                            <div class="row center">
+                                <a class = "btn btn-outline-success " href="/browse/{{eq.id_equipo.num_equipo}}">Más Información</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}

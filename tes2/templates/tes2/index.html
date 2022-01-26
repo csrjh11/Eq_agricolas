@@ -1,21 +1,61 @@
 {% extends "tes2/main.html" %}
 
 {% block content %}
-<div class = "container">
-    <br>
-    <div class = "hero-text-box">
-        <h1>Tesis CJH<br> </h1>
-        <a class="btn btn-primary"  href="{%url 'login' %}">Iniciar Sesión</a>
-        <a class="btn btn-secondary" href="registro">Registrarse</a>
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="row my-3">
+                <h1>Tesis CJH</h1>
+            </div>
+            <div class="row">
+                <div class="col desc">
+                    <p>
+                        Sistema de Información para facilitar la interacción entre usuarios <br>interesados en rentar o comprar 
+                        equipos agrícolas.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h6>
+                        Paso 1: Crea tu Cuenta
+                    </h6>
+                    <h6>
+                        Paso 2: 
+                    </h6>
+                    <h6>
+                        Paso 3: 
+                    </h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="row hh">
+                <form class = "form-control" id = "la-forma" method="post">{%csrf_token%}
+                    <div class="mb-3">
+                        <label for="usuario" class = "center" >Nombre de Usuario</label>
+                        <input type="text" id = "usuario" name = "usuario" required class = "form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contraseña" class = "center" >Contraseña</label>
+                        <input type="password" id = "contraseña" name = "contraseña" required class = "form-control"> 
+                    </div>
+                    {% if msj == "si" %}
+                    <p>Inicio de Sesión fallido, la contraseña y usuario no coinciden</p>
+                    {% endif %}
+                    <div class= "m-2 center">
+                        <button class="btn btn-secondary" id = busqueda type="submit">Iniciar Sesión</button>
+                    </div>
+                </form>
+            </div>
+            <div class="row center mt-4">
+                <h3>No estas registrado?</h3>
+                <a class="btn btn-success" href = "/registro">Registrarse</a>
+            </div>
+        </div>
     </div>
 </div>
-
-<div class = "container">
-<br>
-    <a class="btn btn-primary"  href="/browse">Buscar Maquinaria</a>
-</div>
-</div>
-
 
 
 

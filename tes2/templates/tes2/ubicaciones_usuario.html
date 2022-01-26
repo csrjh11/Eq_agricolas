@@ -10,7 +10,11 @@
         <div class = "col-8 center">
             {% if ubicacion  == "na" %}
             <h1>Aún no tienes ubicaciones registradas</h1>
-            <button class="btn btn-primary"><a href = "/registro_equipo" >Registro de Equipo</a></button>
+            <div class="row mt-4">
+                <div class="b-rec">
+                    <a class="btn btn-success" href="/registro_ubicacion">Nueva Ubicación</a>
+                </div>
+            </div>
             {% else %}
             <table class="table table-hover">
                 <thead>
@@ -43,10 +47,11 @@
                 {% endfor %}
                 </tbody>
             </table>
-            {% endif %}
             <div class="b-rec">
                 <a class="btn btn-success" href="/registro_ubicacion">Nueva Ubicación</a>
             </div>
+            {% endif %}
+
         </div>
     </div>
 </div>

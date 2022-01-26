@@ -52,7 +52,7 @@
             </div>
             <div class = "detalles-ub brd my-4 mx-1 hidden">
                 <table id = "tabla-ub">
-                </table>                
+                </table>
             </div>
         </div>
         <div class="col-3 brd mx-1">
@@ -60,6 +60,7 @@
             <form id="forma-fechas" method="post">{% csrf_token %}
                 <input type="hidden" value id = "lugar" name= "ubicacion">
                 <input type="hidden" value id = "precio-total" name= "precio">
+                <input type="hidden" name="comentario" value id ="comentario-final">
                 <div class = "frm-fechas">
                     <div class="llegada center">
                         <label for="inicio" class= "my-1">Fecha de Inicio</label>
@@ -123,10 +124,14 @@
                         <btn class= "btn btn-primary bot-go">Siguiente</btn>
                     </div>
                 </div>
+
             </form>
             <div class="detalles brd hidden my-2">
                 <table id = "tabla-d">
                 </table>
+            </div>
+            <div id= "comentario" class="hidden" >
+                <textarea id = "com" placeholder="Comentario para el Dueño del Equipo" rows="4" cols="38"></textarea>
             </div>
             <div class="btn-dos center hidden">
                 <btn class = "btn btn-primary bot-sub">Enviar Solicitud</btn>

@@ -1,0 +1,59 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="container">
+  <div class="row hh justify-content-center">
+      <div class="col-5">
+        <form method="POST">{% csrf_token %}
+            <p>
+                <label for="id_tipo_equipo">Tipo de equipo requerido:</label>
+                <select name="tipo_equipo" class="form-control" required id="id_tipo_equipo">
+                    <option value ="" selected>Seleccione una opción</option>
+                </select>
+                </p>
+                <div id = "parametros">
+        
+                </div>
+                <p>
+    
+            <label for="id_a_donde">¿Para que ubicación?</label>
+            <select name="a_donde" class="form-control" required id="id_a_donde">
+                <option value="" selected>Seleccione una opción</option>
+                {% for ub in ubicaciones %}
+                <option value = "{{ub.alias}}">{{ub}}</option>
+                {% endfor %}
+            </select>
+            </p>
+            <p>
+                <label for="hectareas_trabajar">Hectáreas que se trabajarán</label>
+                <input type="number" required name = "hectareas_trabajar" id = "hectareas_trabajar" class = form-control>
+            </p>
+            <p>
+            <label for="id_tipo_operacion">¿Comprar o Rentar?:</label>
+            <select name="tipo_operacion" class="form-control" required id="tipo_operacion">
+                <option value="" selected>Seleccione una opción</option>
+                <option value="venta">Comprar</option>          
+                <option value="renta">Rentar</option>          
+            </select>
+            </p>
+            <div id="fechas">
+            </div>
+            <p>
+                <label for="comentario">Deja un Comentario para tu Solicitud</label>
+                <textarea rows =4  cols = "50" name= "comentario", id = "comentario" required></textarea>
+            </p> 
+
+            
+            <div class="derecha">
+                <button type = "submit" class = "btn btn-secondary" id = "next1">Generar Solicitud</button>
+            </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="{%static 'js/sol_abierta_crea.js'%}"></script>
+{% endblock content%}

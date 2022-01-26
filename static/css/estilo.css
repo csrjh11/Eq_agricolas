@@ -1,9 +1,8 @@
 .box-element{
-	box-shadow:hsl(0, 0%, 80%) 0 0 16px;
 	background-color: #fff;
 	border-radius: 4px;
 	padding: 10px;
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 
 }
 
@@ -66,6 +65,10 @@
 
 .der_elemento{
     float: right;
+}
+
+.izq_elemento{
+  float: left;
 }
 
 .img-cont{
@@ -241,10 +244,8 @@
 }
 
 .botones{
-    display: inline-block;
-    margin-left: 21%;
-
-    
+  display: flex;
+  justify-content: space-between;
 }
 
 .b-acp{
@@ -635,10 +636,84 @@ input[type = "range"]::-ms-thumb{
   display: flex
 }
 
+.l-g{
+  border-bottom: 1px solid rgb(123, 117, 117) ;
+}
+
+
 .l-g p, .l-g input, .l-g option, .l-g select, .l-g textarea {
   font-size: 1.75rem;
 }
 input[type="checkbox"]{
   transform: scale(2);
   padding: 10px;
+}
+
+.hh label,
+.hh p{
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+}
+
+.hh label,
+.hh option,
+.hh select,
+.hh button,
+.hh input,
+.hh p, 
+.hh a{
+  font-size: 1.3rem;
+}
+
+.desc{
+  font-size: 1.4rem;
+}
+.vertical{
+  border-right: 1px solid rgb(123, 117, 117);
+}
+
+.leaflet-popup .leaflet-popup-content-wrapper {
+  background-color: #2d3439;
+  color: #ececec;
+  border-radius: 5px;
+  padding-right: 0.6rem;
+}
+
+.leaflet-popup .leaflet-popup-content {
+  font-size: 1.5rem;
+}
+
+.leaflet-popup .leaflet-popup-tip {
+  background-color: #2d3439;
+}
+
+.modal-solicitud {
+  position: fixed;
+  width: auto;
+  height: auto;
+  top: 50%;
+  left: 40%;
+  margin-top: -375px;
+  margin-left: -375px;
+  z-index: 9999;
+  background-color: rgb(255, 255, 255);
+  justify-content: center;
+}
+
+.modal-fechas {
+  position: fixed;
+  width: 500px;
+  height: auto;
+  top: 66%;
+  left: 75%;
+  margin-top: -375px;
+  margin-left: -375px;
+  z-index: 9999;
+  background-color: rgb(255, 255, 255);
+  justify-content: center;
+}
+
+.modal-fechas label,
+.modal-fechas input{
+  font-size: 1.3rem;
 }
