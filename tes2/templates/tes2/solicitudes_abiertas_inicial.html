@@ -23,7 +23,7 @@
             <select name="a_donde" class="form-control" required id="id_a_donde">
                 <option value="" selected>Seleccione una opción</option>
                 {% for ub in ubicaciones %}
-                <option value = "{{ub.alias}}">{{ub}}</option>
+                <option value = "{{ub.id_ubicacion}}">{{ub}}</option>
                 {% endfor %}
             </select>
             </p>

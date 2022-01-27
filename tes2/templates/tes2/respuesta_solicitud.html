@@ -94,8 +94,8 @@
                         <h3>Comentario</h3>
                     </span>
                     <textarea name = "comentario" placeholder="Escriba un Comentario" rows="4" cols = "54"></textarea>
-                    <input type="hidden" name = "fecha_inicio" value = "{{sol.fecha_inicio}}" id = "in-fecha-i">
-                    <input type="hidden" name = "fecha_final" value = "{{sol.fecha_final}}" id = "in-fecha-f">
+                    <input type="hidden" name = "fecha_inicio" value = "{{sol.fecha_inicio|date:"Y-m-d"}}" id = "in-fecha-i">
+                    <input type="hidden" name = "fecha_final" value = "{{sol.fecha_final|date:"Y-m-d"}}" id = "in-fecha-f">
                     <input type="hidden" name = "costo" value = "{{sol.costo}}" id = "in-costo">
                 </form>
 

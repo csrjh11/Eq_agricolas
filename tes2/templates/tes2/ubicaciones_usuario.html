@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container">
     <div class="row center my-2">
-        <h2>Mis ubicaciones</h2>
+        <h2>Mis Ubicaciones</h2>
     </div>
     <div class="row">
         <div class = "col-8 center">
@@ -55,16 +55,8 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-const btnB = document.querySelectorAll("#btn-el");
-btnB.forEach(bt => bt.addEventListener("click", function(){
-    nombre = this.parentNode.parentNode.firstElementChild.nextElementSibling.innerHTML
-    aidi = this.firstElementChild.value
-    if(confirm("Eliminar la ubicación {{ub.alias}}?")){
-        window.location.replace(`/mi_cuenta/ubicaciones/${aidi}/eliminar`)
-    }
-}))
-</script>
+
+<script type="text/javascript" src="{%static 'js/lista_ubicaciones.js'%}"></script>
 
 {% if messages %}
    <script>

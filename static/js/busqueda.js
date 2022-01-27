@@ -13,6 +13,8 @@ const listaPq = document.getElementById("para_que")
 let currentYear = new Date().getFullYear();
 let earliestYear = 1970;
 let cntr = 0;
+
+//Datos de estados y sus municipios correspondientes
 const arrEstados = ["Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila de Zaragoza","Colima","Chiapas","Chihuahua","Ciudad de México","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco",
 "Estado de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"]
 const prE = [
@@ -147,6 +149,5 @@ if (filtro.childNodes.length > 1){
     }
     if(parseo.hasOwnProperty("para_que")){
         listaPq.value = parseo. para_que
-
     }
 }

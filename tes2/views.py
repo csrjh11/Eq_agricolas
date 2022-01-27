@@ -1,3 +1,4 @@
+import copy
 from urllib.parse import urldefrag
 from PIL import Image
 from django.contrib.auth.models import User
@@ -16,7 +17,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 import random, math, json, os, io, sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 hoy = date.today()
 
 
@@ -1097,17 +1098,38 @@ def respuesta_sol_eq(request, id_sol):
         "img_equipo": imagen_equipo_solicitud,
         "eqiupos_usuario": equipos_usuario,
     }
+
     if request.method == "POST":
         datos = request.POST.dict()
         print(datos)
-
-    
+        fecha_f= datos["fecha_final"]
+        if "/" in fecha_f:
+            fs = datos["fecha_inicio"].split("/")
+            fecha_i = f"{fs[2]}-{fs[1]}-{fs[0]}"
+            ft = fecha_f.split("/")
+            fecha_fin = f"{ft[2]}-{ft[1]}-{ft[0]}"
+            del datos["fecha_inicio"]
+            del datos["fecha_final"]
+        del datos["csrfmiddlewaretoken"]
+        sol_respuesta = copy.deepcopy(solicitud_e)
+        sol_respuesta.id_solicitud = None
+        sol_respuesta.tipo_solicitud = 3
+        solicitud_e.estatus = "4"
+        sol_respuesta.quien_manda = usua
+        for k, v in datos.items():
+            setattr(sol_respuesta, k, v)
+        if not solicitud_e.sol_respondida:
+            sol_respuesta.sol_respondida = solicitud_e
+        else:
+            sol_respuesta.sol_respondida = solicitud_e.sol_respondida
+        sol_respuesta.save()
+        solicitud_e.save()
+        messages.success(request, "Solicitud Respondida")
+        return redirect("noti")    
     return render(request, "tes2/respuesta_solicitud.html", context)
 
 def solicitud_abierta_inicial(request):
     usr = request.user
-    id_sol = Usuario.objects.filter(id_usuario = request.user)
-    print(id_sol)
     usuario_s = Usuario.objects.get(id_usuario = usr)
     ubicaciones = Ubicacion.objects.filter(id_usuario = usuario_s)
     context = {
@@ -1116,24 +1138,67 @@ def solicitud_abierta_inicial(request):
     if request.method == "POST":
         d_post = request.POST.dict()
         print(d_post)
-        comenta = d_post["comentario"]
-        a_dnd = Ubicacion.objects.filter(alias = d_post["a_donde"]).filter(id_usuario = usuario_s)
-        sol = Solicitud(
-            id_solicitante      = id_sol[0],
-            tipo_operacion      = "renta",
-            a_donde             = a_dnd[0],
-            fecha_solicitud     = hoy,
-            estatus             = "1",
-            tipo_solicitud      = 2,
-            comentario          = comenta,
-            quien_manda         = usuario_s,
-            )
-        
+        del d_post["csrfmiddlewaretoken"]
+        a_don = d_post["a_donde"]
+        del d_post["a_donde"]
+        ub_dnd = ubicaciones.get(id_ubicacion = a_don)
+        sol_a = Solicitud(**d_post,
+                            a_donde = ub_dnd,
+                            tipo_solicitud = 2,
+                            estatus = 1,
+                            id_solicitante = usuario_s,
+                            quien_manda = usuario_s,
+                            fecha_solicitud = hoy,
+        )
+        sol_a.save()
+        messages.success(request, 'Solicitud Creada Correctamente!')        
         return redirect("noti")
-    return render(request, "tes2/sol_abiertas_inicial.html", context)
+    return render(request, "tes2/solicitudes_abiertas_inicial.html", context)
 
 def solicitudes_abiertas(request):
-    return
+    usr = request.user
+    usuario_sol = Usuario.objects.get(id_usuario = usr)
+    llaves = request.GET.dict()
+    filtro = {}
+    for llave, valor in llaves.items():
+        if valor != "":
+            filtro[llave] = valor
+    print(filtro)
+    # crea_sol_ab_azar(20)
+    solicitudes = Solicitud.objects.filter(tipo_solicitud = 2).exclude(id_solicitante = usuario_sol).filter(**filtro).order_by("fecha_inicio")    
+    context = {
+        "sol":solicitudes
+    }
+    return render(request, "tes2/solicitudes_abiertas_lista.html",context)
 
+def crea_sol_ab_azar(num):
+    fecha_inicial = datetime(2022,2,12)
+    fecha_final = datetime(2022,3,30)
+    dias = (fecha_final - fecha_inicial).days
 
-
+    
+    for i in range(num):
+        usuario = Usuario.objects.order_by("?").first()
+        tipo_eq = random.choice(lista_tipos_equipo).lower()
+        ubicacion_e = Ubicacion.objects.filter(id_usuario = usuario).first()
+        print(ubicacion_e)
+        comentario = f"Busco un {tipo_eq} para rentar, no importa la condición del equipo"
+        num_dias = random.randrange(dias)
+        fecha_ini = fecha_inicial + timedelta(days = num_dias)
+        fecha_f = fecha_ini+ timedelta(random.randrange(5))
+        if fecha_ini == fecha_f:
+            fecha_f + timedelta(1)
+        sol_a = Solicitud(
+                            a_donde = ubicacion_e,
+                            tipo_solicitud = 2,
+                            estatus = 1,
+                            id_solicitante = usuario,
+                            quien_manda = usuario,
+                            fecha_solicitud = hoy,
+                            tipo_operacion = "renta",
+                            fecha_inicio = fecha_ini,
+                            fecha_final = fecha_f,
+                            comentario = comentario,
+                            tipo_equipo = tipo_eq,
+        )
+        sol_a.save()

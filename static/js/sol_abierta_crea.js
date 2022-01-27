@@ -2,6 +2,7 @@
 const tipoEquipo = document.getElementById("id_tipo_equipo");
 const parametros = document.getElementById("parametros");
 const ventaRenta = document.getElementById("tipo_operacion");
+const columna = document.getElementById("col-datos");
 const te = ["Tractor", "Arado", "Rastra", "Sembradora", "Pulverizadora", "Cosechadora",]
 
 te.forEach( marca =>{
@@ -139,9 +140,11 @@ tipoEquipo.addEventListener("change", function(){
     if(queEs === ""){
         console.log("ajam")
         parametros.innerHTML = ""
+        columna.classList.add("hidden")
     }else{
         parametros.innerHTML = ""
         parametros.innerHTML += obEq[queEs]
+        columna.classList.remove("hidden")
     }
 
 })
@@ -170,3 +173,4 @@ ventaRenta.addEventListener("change", function(){
         divFEchas.innerHTML =""
     }
 })
+

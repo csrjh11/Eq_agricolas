@@ -1,0 +1,138 @@
+{% extends "tes2/main.html" %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+
+
+
+<div class="container-fluid">
+    <div class = "row hh mx-4">
+        <div class="col-3 vertical">
+            <div class="row">
+                <form method = "get" id = "la-forma">
+                    <label for="tipo_equipo" class = "center" >Tipo de Equipo Soliciado</label>
+                    <select name = "tipo_equipo" id = "tipo_equipo" class ="form-control">
+                        <option value = "">----</option>
+                        <option value = "tractor">Tractor</option>
+                        <option value = "arado">Arado</option>
+                        <option value = "rastra">Rastra</option>
+                        <option value = "sembradora">Sembradora</option>
+                        <option value = "pulverizadora">Pulverizadora</option>
+                        <option value = "cosechadora">Cosechadora</option>
+                        <option value = "otros">Otros</option>
+                    </select>
+                    <br>
+                    <label for="estado" >Estado</label>
+                    <select name = "a_donde__estado" id = "estado" class ="form-control">
+                        <option value = "">Seleccione un Estado</option>
+                    </select>
+                    <br>
+                    <label for="municipio" class = "hidden" id = "labelM">Municipio</label>
+                    <select name = "a_donde__municipio" id = "municipio" class ="form-control hidden">
+                        <option value ="">Seleccione un Municipio</option>
+                    </select>
+                    <br>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div id ="btn-reset" class ="inline my-3">
+                        <a class="btn btn-primary" href = "/solicitudes_abiertas">Eliminar filtros</a>
+                    </div>
+                    <div class="der_elemento my-3" id ="btn-go">
+                        <button class="btn btn-primary">Buscar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="margin-top: 160px;">
+                    <a class="btn btn-primary" href = "/browse__mapa">Ir a Busqueda de Equipo</a>
+                </div>               
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="row justify-content-center">
+                {% if sol.count == 0 %}
+                <span class="center">
+                    <h3>No se encontraron Solicitudes con estas Especificaciones</h3>
+                </span>
+                <div class="col-6">
+                    <div id ="btn-reset" class ="inline my-3">
+                        <a class="btn btn-primary" href = "/browse">Eliminar filtros</a>
+                    </div>
+                    <div class="row">
+                </div>
+                {% endif %}
+
+
+
+                {% for sab in sol %}
+                <div class = "col-4 p-1 my-1">
+                    <div class="brd">
+                        <div class = "box-element">
+                            <div class="row center">
+                                <h3><strong>Solicitio {{sab.tipo_equipo|capfirst}} para {{sab.tipo_operacion}}</strong></h3>
+                                <hr>
+                            </div>
+                            <div class="row justify-content-center">
+                                    {%if sab.tipo_operacion == "renta"%}
+                                    <div class="col-6 center vertical">
+                                        <h4>Fecha Inicial</h4>
+                                        <h3>{{sab.fecha_inicio|date:"d/m/Y"}}</h3>
+                                    </div>
+                                    <div class="col-6 center">
+                                        <h4>Fecha Final</h4>
+                                        <h3>{{sab.fecha_final|date:"d/m/Y"}}</h3>
+                                    </div>  
+                                    {% endif %}
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <h4>En donde:</h4>
+                                <h3>{{sab.a_donde.municipio}}, {{sab.a_donde.estado}}</h3>
+                            </div>
+                            <hr>
+                            <div class="row center">
+                                <a class = "btn btn-outline-success " href="/browse/{{eq.id_equipo.num_equipo}}">Más Información</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="row">
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if equipos.has_previous %}
+                            <a href="browse?{{url}}page=1">&laquo; Primera</a>
+                            <a href="browse?{{url}}page={{ equipos.previous_page_number }}">Anterior</a>
+                        {% endif %}
+                
+                        <span class="current">
+                            Página {{ equipos.number }} de {{ equipos.paginator.num_pages }}.
+                        </span>
+                
+                        {% if equipos.has_next %}
+                            <a href="browse?{{url}}page={{ equipos.next_page_number }}">Siguiente</a>
+                            <a href="browse?{{url}}page={{ equipos.paginator.num_pages }}">Ultima &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row hidden" id = "filtro">
+        {% if filtro %}
+        <p>{{filtro}}</p>
+        {% endif %}
+    </div>
+</div>
+
+<script type="text/javascript" src="{%static 'js/busqueda.js'%}"></script>
+
+
+
+
+{% endblock content %}

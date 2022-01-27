@@ -28,7 +28,7 @@ SECRET_KEY = '$oq%p3c9uqj_9&_+sbrdq7ut5ui84_*7a0a_7snm%@^o6a+zdu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["stark-peak-41473.herokuapp.com/", "127.0.0.1"]
+ALLOWED_HOSTS = ["stark-peak-41473.herokuapp.com/", "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -148,7 +148,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
 
 LOGIN_REDIRECT_URL = "mi-cuenta"
 
-db_from_env = dj_database_url.config(conn_max_age=500)
+db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)
 
 

@@ -9,8 +9,8 @@
                 <h1>Equipo</h1>
                 <h2>{{sol.id_equipo.nombre_equipo|capfirst}}</h2>
                 <hr>
-                <h1>Usuario Interesado</h1>
-                <h2>{{sol.id_solicitante.nombre|capfirst}} {{notif.id_solicitante.apellido_1|capfirst}} {{notif.id_solicitante.apellido_2|capfirst}}</h2>
+                <h1>Dueño del Equipo</h1>
+                <h2>{{sol.id_dueño_eq.nombre|capfirst}} {{notif.id_dueño_eq.apellido_1|capfirst}} {{notif.id_dueño_eq.apellido_2|capfirst}}</h2>
                 <hr>
                 <h2>Información de ubicaciones</h2>
                 <br>
@@ -58,7 +58,7 @@
             <br>
             <div class="row">
                 <h2>Estatus de la Soliciud</h2>
-                <h3>{{sol.estatus}}</h3>
+                <h3>{{sol.estatus_sol}}</h3>
             </div>
         </div>
     </div>

@@ -1,9 +1,9 @@
-from pyexpat import model
-from xml.etree.ElementInclude import default_loader
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import PositiveSmallIntegerField
+
 
 # Create your models here.
 
@@ -220,11 +220,11 @@ class Solicitud(models.Model):
     comentario = models.CharField(max_length = 255, null = True, blank = True)
     tipo_operacion = models.CharField(max_length=10)
     a_donde = models.ForeignKey(Ubicacion, on_delete=models.SET_DEFAULT, default="", related_name = "hacia_donde_sol")
-    desde_donde = models.ForeignKey(Ubicacion, blank=True, null = True, on_delete=models.SET_DEFAULT, default="", related_name = "dsde_donde_sol" )
+    desde_donde = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, related_name = "dsde_donde_sol", null = True)
     fecha_solicitud = models.DateField()
     fecha_inicio = models.DateField(blank=True,null =True)
     fecha_final = models.DateField(null =True, blank=True)
-    estatus = models.CharField( max_length=10)
+    estatus = models.CharField( max_length=10, default = "1")
     costo = models.IntegerField(blank=True,null =True)
     hectareas_trabajar = models.PositiveSmallIntegerField(blank=True,null = True)
     tipo_solicitud = models.PositiveSmallIntegerField(default= 1)
@@ -238,13 +238,15 @@ class Solicitud(models.Model):
     @property
     def estatus_sol(self):
         if self.estatus == "1":
-            return "En Espera"
+            return "En Espera de Respuesta"
         if self.estatus == "2":
             return "Aceptada"
         if self.estatus == "3":
             return "Rechazada"
         if self.estatus == "4":
             return "Respondida"
+        if self.estatus == "5":
+            return "Finalizada"
         
 
 class Conversacion(models.Model):

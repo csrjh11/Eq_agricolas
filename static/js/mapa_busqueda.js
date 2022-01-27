@@ -1,4 +1,14 @@
 "use strict";
+window.onload = function(){
+    const url = window.location.href
+    console.log(url)
+
+    slideOne();
+    slideTwo();
+}
+
+
+
 //Definición de clase Mapa
 class Mapa{
     #mapa;
@@ -11,12 +21,12 @@ class Mapa{
 
 
     renderWorkoutMarker(wo, cluster){
-        const bounds = this.#mapa.getBounds()
+        // const bounds = this.#mapa.getBounds()
         const equis = parseFloat(wo.coord_x)
         const ye = parseFloat(wo.coord_y)
 
-        const lasEquis = [bounds._northEast.lat, bounds._southWest.lat]
-        const lasYes = [bounds._northEast.lng, bounds._southWest.lng]
+        // const lasEquis = [bounds._northEast.lat, bounds._southWest.lat]
+        // const lasYes = [bounds._northEast.lng, bounds._southWest.lng]
         if(wo.precio_renta_dia != 0){
             var html_precios = `<div class="col-6">
             <h6>Precio de renta/dia:</h6>
@@ -34,7 +44,6 @@ class Mapa{
             <h5>$${wo.precio_venta}</h5>
             </div>`
         }
-        console.log(wo)
         const popu = L.popup({
         maxWidth: 250,
         minWidth: 100,
@@ -63,7 +72,7 @@ class Mapa{
     };
 
     con_default(){
-        alert("Couldn't get current position!")
+        alert("No se pudo obtener su posición actual")
         const coords_def =  [19.46499475547948, -98.9073248779107]
         this.loadMap(coords_def)
     }
@@ -79,6 +88,7 @@ class Mapa{
         const respo = await fetch("/equipos")
         const jsonR = await respo.json()
         this.#equipos = jsonR.response
+
         let markerClusters = L.markerClusterGroup();
         this.#equipos.forEach(eq => this.renderWorkoutMarker(eq, markerClusters))
     }
@@ -105,7 +115,6 @@ class Mapa{
     }).addTo(this.#mapa);
     this.#mapa.invalidateSize();
 
-    // this.#mapa.on("moveend",)
     }    
 }
 const mapaT1= new Mapa
@@ -140,8 +149,5 @@ const slideTwo = function(){
     inputDos.value = sliderDos.value
 }
 
-window.onload = function(){
-    slideOne();
-    slideTwo();
-}
+
 

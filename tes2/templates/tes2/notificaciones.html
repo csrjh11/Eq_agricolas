@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container my-2">
-    <div class="row justify-content-start">
+    <div class="row justify-content-center" id = "botones">
         <div class = "col-2">
             <button class="btn btn-primary" id = "uno">
                 Solicitudes a Mis Equipos
@@ -15,16 +15,22 @@
             </button>
         </div>
         <div class="col-2">
-            <button class="btn btn-light" id = "dos">
+            <button class="btn btn-light" id = "tres">
                 Mis Solicitudes "Abiertas"
             </button>
         </div>
+        <div class="col-2">
+            <button class="btn btn-light" id = "tres">
+                Solicitudes Abiertas Respondidas
+            </button>
+        </div>
     </div>
-    <div class="row mt-1">
-        <div class = "col center" id = "contenido-1">
+    <div class="row mt-4">
+        <div class = "col center cont" id = "contenido-1">
             {% if solicitudes  == "na" %}
-            <span class ="mt-3">
+            <span >
                 <h1>No tiene solicitudes pendientes</h1>
+                <a class = "btn btn-success" href="/solicitudes_abiertas">Ir a Solicitudes Abiertas</a>
             </span>
             {% else %}
             <table class="table table-hover">
@@ -53,10 +59,11 @@
             </table>
             {% endif %}
         </div>
-        <div class = "col center hidden" id = "contenido-2">
+        <div class = "col center hidden cont" id = "contenido-2">
             {% if otras  == "na" %}
             <span class ="mt-3">
                 <h1>No tiene solicitudes pendientes</h1>
+                <a class = "btn btn-success" href="/browse_mapa">Buscar un Equipo</a>
             </span>            {% else %}
             <table class="table table-hover">
                 <thead>
@@ -86,10 +93,48 @@
             </table>
             {% endif %}
         </div>
-        <div class = "col center hidden" id = "contenido-3">
+        <div class = "col center hidden cont" id = "contenido-3">
             {% if abiertas  == "na" %}
             <span class ="mt-3">
                 <h1>No tiene solicitudes pendientes</h1>
+                <a class = "btn btn-success" href="/solicitudes_abiertas/gen">Generar una Solicitud Abiertas</a>
+                
+            </span>            
+            {% else %}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Id de la Solicitud</th>
+                    <th scope="col">Tipo de Equipo</th>
+                    <th scope="col">Tipo de Transacción</th>
+                    <th scope="col">Fechas</th>
+                    <th scope="col">Estatus</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id = "num">
+                {% for sol in abiertas %}
+                <tr>  
+                    <td>{{sol.id_dueño_eq.nombre}} {{sol.id_dueño_eq.apellido_1}} {{sol.id_dueño_eq.apellido_2}}</td>
+                    <td>{{sol.id_equipo.tipo_equipo|capfirst}} {{sol.id_equipo.marca}} {{sol.id_equipo.modelo}}</td>
+                    <td>{{sol.tipo_operacion|capfirst}}</td>
+                    <td>{{sol.fecha_inicio|date:"d/m/Y"}} - {{sol.fecha_final|date:"d/m/Y"}}</td>
+                    <td>{{sol.estatus_sol}}</td>
+                    <td> 
+                        <a class = "btn btn-outline-success" href="mis_solicitudes/{{sol.id_solicitud}}">Más Información</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+        <div class = "col center hidden cont" id = "contenido-4">
+            {% if abiertas  == "na" %}
+            <span class ="mt-3">
+                <h1>No tiene solicitudes pendientes</h1>
+                <a class = "btn btn-success" href="/solicitudes_abiertas/gen">Generar una Solicitud Abiertas</a>
             </span>            
             {% else %}
             <table class="table table-hover">

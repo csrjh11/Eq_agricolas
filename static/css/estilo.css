@@ -28,7 +28,7 @@
 .map-container{
 	height: 600px;
 	display: flex;
-	padding: 1rem 1rem;
+	padding: 0.3rem 1rem;
 	justify-content: center;
 
 }
