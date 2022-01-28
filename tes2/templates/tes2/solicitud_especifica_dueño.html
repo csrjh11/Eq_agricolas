@@ -66,14 +66,23 @@
                 <textarea disabled rows= 4> {{sol.comentario|capfirst}}</textarea>
             </div>
             <br>
+            {% if sol.estatus  == "1" %}
             <div class="botones">
                 <form class = "form" method = "POST" id = "forma-SN"> {% csrf_token %}
                     <input type="hidden" value name = "wwmd" id = "wwmd">
                 </form>
                 <button class = "btn btn-primary b-acp">Aceptar</button>
                 <button class = "btn btn-danger b-rec">Rechazar</button>
-                <a class = "btn btn-secondary" href= "/mis_solicitudes/{{sol.id_solicitud}}/rsp">Responder</a>
+                <a class = "btn btn-secondary" href= "/mis_solicitudes/{{sol.id_solicitud}}/rsp">Responder</a>            
             </div>
+            {% else %}
+            <div class="row">
+                <h3>Esta solicitud ya ha sido respondida</h3>
+                <span class="center">
+                    <a class = "btn btn-secondary" href="/mis_solicitudes">Ir a Mis Solicitudes</a>
+                </span>
+            </div>
+            {% endif %}
         </div>
     </div>
     <div class="row center">

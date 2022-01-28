@@ -157,7 +157,37 @@ def calcula_precio(f1,f2, cash):
     precio = dia_c * cash
     return precio
 
+def crea_sol_ab_azar(num):
+    fecha_inicial = datetime(2022,2,12)
+    fecha_final = datetime(2022,3,30)
+    dias = (fecha_final - fecha_inicial).days
 
+    
+    for i in range(num):
+        usuario = Usuario.objects.order_by("?").first()
+        tipo_eq = random.choice(lista_tipos_equipo).lower()
+        ubicacion_e = Ubicacion.objects.filter(id_usuario = usuario).first()
+        print(ubicacion_e)
+        comentario = f"Busco un {tipo_eq} para rentar, no importa la condición del equipo"
+        num_dias = random.randrange(dias)
+        fecha_ini = fecha_inicial + timedelta(days = num_dias)
+        fecha_f = fecha_ini+ timedelta(random.randrange(5))
+        if fecha_ini == fecha_f:
+            fecha_f + timedelta(1)
+        sol_a = Solicitud(
+                            a_donde = ubicacion_e,
+                            tipo_solicitud = 2,
+                            estatus = 1,
+                            id_solicitante = usuario,
+                            quien_manda = usuario,
+                            fecha_solicitud = hoy,
+                            tipo_operacion = "renta",
+                            fecha_inicio = fecha_ini,
+                            fecha_final = fecha_f,
+                            comentario = comentario,
+                            tipo_equipo = tipo_eq,
+        )
+        sol_a.save()
 
 
 ##################################################### Empiezan Vistas #################################################3
@@ -736,9 +766,10 @@ def solicitudes_usuario(request):
     if usr.is_anonymous:
         raise PermissionDenied
     el_usu = Usuario.objects.get(id_usuario = usr)
-    soli = Solicitud.objects.filter(id_dueño_eq = el_usu).filter(estatus = "1").filter(tipo_solicitud = 1)
-    otras_sol = Solicitud.objects.filter(id_solicitante = el_usu).filter(estatus = "1").filter(tipo_solicitud = 1)
+    soli = Solicitud.objects.filter(id_dueño_eq = el_usu).filter(estatus__in= "1,4").filter(tipo_solicitud = 1)
+    otras_sol = Solicitud.objects.filter(id_solicitante = el_usu).filter(estatus__in= "1,4").filter(tipo_solicitud = 1)
     sol_abiertas = Solicitud.objects.filter(id_solicitante = el_usu).filter(estatus = "1").filter(tipo_solicitud = 2)
+    sol_respuestas = Solicitud.objects.filter(Q(id_dueño_eq = el_usu) | Q(id_solicitante = el_usu)).filter(tipo_solicitud = 3).order_by("id_solicitud")
     if soli.count() == 0:
         soli = "na"
     if otras_sol.count() == 0:
@@ -749,6 +780,7 @@ def solicitudes_usuario(request):
         "solicitudes":   soli,
         "otras": otras_sol,
         "abiertas": sol_abiertas,
+        "respuestas": sol_respuestas,
     }
     return render(request, "tes2/notificaciones.html", context)
 
@@ -768,14 +800,14 @@ def solicitudes_especificas(request, id_sol):
     if request.method == "POST":
         si_no = request.POST.dict()
         if si_no["wwmd"] == "true":
-            la_sol.estatus = "3"
+            la_sol.estatus = "2"
             n_tr = Transaccion(
                     id_equipo           = la_sol.id_equipo,
                     id_dueño            = la_sol.id_dueño_eq,
                     id_arrendatario     = la_sol.id_solicitante,
                     desde_donde         = la_sol.desde_donde,
                     hacia_donde         = la_sol.a_donde,
-                    estatus             = "3",
+                    estatus             = "3", #Cambiar dependiendo de fecha (Puede ser en ejecucion o espera)
                     fecha_inicial       = la_sol.fecha_inicio,
                     importe_total       = la_sol.costo,
                     tipo_transaccion    = la_sol.tipo_operacion
@@ -788,7 +820,7 @@ def solicitudes_especificas(request, id_sol):
 
         elif si_no["wwmd"] == "false":
             print("negao")
-            la_sol.estatus = "4"
+            la_sol.estatus = "3"
             print(sol[0].estatus)
             #Avisar al Solicitante +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         print("acabao")
@@ -1171,34 +1203,3 @@ def solicitudes_abiertas(request):
     }
     return render(request, "tes2/solicitudes_abiertas_lista.html",context)
 
-def crea_sol_ab_azar(num):
-    fecha_inicial = datetime(2022,2,12)
-    fecha_final = datetime(2022,3,30)
-    dias = (fecha_final - fecha_inicial).days
-
-    
-    for i in range(num):
-        usuario = Usuario.objects.order_by("?").first()
-        tipo_eq = random.choice(lista_tipos_equipo).lower()
-        ubicacion_e = Ubicacion.objects.filter(id_usuario = usuario).first()
-        print(ubicacion_e)
-        comentario = f"Busco un {tipo_eq} para rentar, no importa la condición del equipo"
-        num_dias = random.randrange(dias)
-        fecha_ini = fecha_inicial + timedelta(days = num_dias)
-        fecha_f = fecha_ini+ timedelta(random.randrange(5))
-        if fecha_ini == fecha_f:
-            fecha_f + timedelta(1)
-        sol_a = Solicitud(
-                            a_donde = ubicacion_e,
-                            tipo_solicitud = 2,
-                            estatus = 1,
-                            id_solicitante = usuario,
-                            quien_manda = usuario,
-                            fecha_solicitud = hoy,
-                            tipo_operacion = "renta",
-                            fecha_inicio = fecha_ini,
-                            fecha_final = fecha_f,
-                            comentario = comentario,
-                            tipo_equipo = tipo_eq,
-        )
-        sol_a.save()

@@ -24,48 +24,36 @@ listaBotones.forEach(btn => btn.addEventListener("click", function(){
     })
 }))
 
+//////////// Contro de respuestas
 
-// //BOTONES
-// const btnUno = document.getElementById("uno");
-// const btnDos = document.getElementById("dos");
-// const btnTres = document.getElementById("tres");
+const listaBotonesRespuestas = document.querySelectorAll("#boton-respuestas")
+console.log(listaBotonesRespuestas)
+const listaRespuestas = document.querySelectorAll(".row-resp");
+console.log(listaRespuestas)
 
-// //Contenidos
-// const cont1 = document.getElementById("contenido-1");
-// const cont2 = document.getElementById("contenido-2");
-// const cont3 = document.getElementById("contenido-3");
 
-// btnUno.addEventListener("click", function(){
-//     if (!cont2.classList.contains("hidden")){
-//         cont1.classList.remove("hidden")
-//         cont2.classList.add("hidden")
-//         cont3.classList.add("hidden")
 
+listaBotonesRespuestas.forEach( btn => btn.addEventListener("click", function(){
+
+    const indice = Array.prototype.indexOf.call(listaBotonesRespuestas,this)
+    if(btn.classList.contains("btn-outline-danger")){
+        listaRespuestas.forEach((el, i) => {
+            if(i == indice){
+                el.classList.add("hidden");
+            }
+        })
+        btn.classList.add("btn-outline-success")
+        btn.classList.remove("btn-outline-danger")
+        btn.textContent = "Ver Respuestas"
         
-//         btnUno.classList.add("btn-primary")
-//         btnDos.classList.remove("btn-primary")
-//         btnTres.classList.remove("btn-primary")
-
-        
-//         btnUno.classList.remove("btn-light")
-//         btnDos.classList.add("btn-light")
-//         btnTres.classList.add("btn-light")
-        
-//     }
-// });
-// btnDos.addEventListener("click", function(){
-//     if (cont2.classList.contains("hidden")){
-//         cont1.classList.add("hidden")
-//         cont2.classList.remove("hidden")
-//         cont3.classList.add("hidden")
-        
-//         btnUno.classList.remove("btn-primary")
-//         btnUno.classList.add("btn-light")
-
-//         btnDos.classList.remove("btn-light")
-//         btnDos.classList.add("btn-primary")
-
-
-//     }
-// });
-
+    }else{
+        listaRespuestas.forEach((el, i) => {
+            if(i == indice){
+                el.classList.remove("hidden");
+            }
+        })
+        btn.classList.remove("btn-outline-success")
+        btn.classList.add("btn-outline-danger")
+        btn.textContent = "Ocultar Respuestas"
+    }
+}))

@@ -717,3 +717,7 @@ input[type="checkbox"]{
 .modal-fechas input{
   font-size: 1.3rem;
 }
+
+.col-resp{
+  background-color: rgb(194, 197, 204);
+}

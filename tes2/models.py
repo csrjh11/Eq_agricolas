@@ -247,7 +247,6 @@ class Solicitud(models.Model):
             return "Respondida"
         if self.estatus == "5":
             return "Finalizada"
-        
 
 class Conversacion(models.Model):
     id_conversacion = models.AutoField(primary_key=True)

@@ -40,6 +40,8 @@
                     <th scope="col">Equipo</th>
                     <th scope="col">Tipo de transacción</th>
                     <th scope="col">Fechas</th>
+                    <th scope="col">Estatus</th>
+                    <th></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -50,10 +52,52 @@
                     <td>{{sol.id_equipo}}</td>
                     <td>{{sol.tipo_operacion|capfirst}}</td>
                     <td>{{sol.fecha_inicio|date:"d/m/Y"}} - {{sol.fecha_final|date:"d/m/Y"}}</td>
+                    <td>{{sol.estatus_sol}}</td>
                     <td> 
                         <a class = "btn btn-outline-success" href="mis_solicitudes/{{sol.id_solicitud}}">Más Información</a>
                     </td>
+                    {% if sol.estatus == "4"%}
+                        <td><button class = "btn btn-outline-success" id = "boton-respuestas">Ver Respuestas</button></td>
+                    {% endif %}
                 </tr>
+                    {% if sol.estatus == "4"%}
+                    <tr class = "hidden row-resp">
+                        <td colspan="7">
+                            <div class="row justify-content-center">
+                                <div class="col-10 brd col-resp">
+                                    <table class = "table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope = "col">Fecha de Generación</th>
+                                                <th scope = "col">¿Quien generó?</th>
+                                                <th scope = "col">Estatus</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for resp in respuestas %}
+                                                {% if resp.sol_respondida == sol %}
+                                                <tr>
+                                                    <td>{{resp.fecha_solicitud|date:"d/m/Y"}}</td>
+                                                    {% if resp.quien_manda == sol.id_dueño_eq%}
+                                                    <td> Yo </td>
+                                                    {% else %}
+                                                    <td>{{resp.quien_manda}}</td>
+                                                    {% endif %}
+                                                    <td>{{resp.estatus_sol}}</td>         
+                                                    <td> 
+                                                        <a class = "btn btn-outline-success" href="mis_solicitudes/{{resp.id_solicitud}}">Más Información</a>
+                                                    </td>
+                                                </tr>                                 
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>    
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
@@ -74,6 +118,7 @@
                     <th scope="col">Fechas</th>
                     <th scope="col">Estatus</th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody id = "num">
@@ -87,7 +132,48 @@
                     <td> 
                         <a class = "btn btn-outline-success" href="mis_solicitudes/{{sol.id_solicitud}}">Más Información</a>
                     </td>
+                    {% if sol.estatus == "4"%}
+                        <td><button class = "btn btn-outline-success" id = "boton-respuestas">Ver Respuestas</button></td>
+                    {% endif %}
                 </tr>
+                    {% if sol.estatus == "4"%}
+                    <tr class = "hidden row-resp">
+                        <td colspan="7">
+                            <div class="row justify-content-center">
+                                <div class="col-10 brd col-resp">
+                                    <table class = "table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope = "col">Fecha de Respuesta</th>
+                                                <th scope = "col">¿Quien generó?</th>
+                                                <th scope = "col">Estatus</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for resp in respuestas %}
+                                                {% if resp.sol_respondida == sol %}
+                                                <tr>
+                                                    <td>{{resp.fecha_solicitud|date:"d/m/Y"}}</td>
+                                                    {% if resp.quien_manda == sol.id_solicitante%}
+                                                    <td> Yo </td>
+                                                    {% else %}
+                                                    <td>{{resp.quien_manda}}</td>
+                                                    {% endif %}
+                                                    <td>{{resp.estatus_sol}}</td>         
+                                                    <td> 
+                                                        <a class = "btn btn-outline-success" href="mis_solicitudes/{{resp.id_solicitud}}">Más Información</a>
+                                                    </td>
+                                                </tr>                                 
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>    
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
@@ -96,7 +182,7 @@
         <div class = "col center hidden cont" id = "contenido-3">
             {% if abiertas  == "na" %}
             <span class ="mt-3">
-                <h1>No tiene solicitudes pendientes</h1>
+                <h1>No tiene solicitudes abiertas</h1>
                 <a class = "btn btn-success" href="/solicitudes_abiertas/gen">Generar una Solicitud Abiertas</a>
                 
             </span>            
@@ -179,4 +265,33 @@
 <script type="text/javascript" src = "{%static 'js/solicitudes.js' %}"></script>
 
 
+
 {% endblock content %}
+
+
+
+
+
+<table class = "table table-hover">
+    <thead>
+        <tr scope = "col">Fecha de Respuesta</tr>
+        <tr scope = "col">Estatus</tr>
+        <tr></tr>
+    </thead>
+    <tbody>
+        {% for resp in respuestas %}
+            {% if resp.sol_respondida == sol %}
+            <tr>
+                <td>{{resp.fecha_solicitud}}</td>
+                <td>{{resp.estatus}}</td>
+                <td> 
+                    <a class = "btn btn-outline-success" href="mis_solicitudes/{{resp.id_solicitud}}">Más Información</a>
+                </td>
+            </tr>                                 
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+<button class="btn btn-secondary" type="button" id = "btn-nel-mapa">
+    Cerrar
+</button>
