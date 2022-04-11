@@ -344,6 +344,9 @@ botSub.addEventListener("click", function(){
 
     const valCom = document.getElementById("com").value
     document.getElementById("comentario-final").value = valCom
+
+    const valHas = document.getElementById("hectareas-val").value;
+    document.getElementById("hectareas").value = valHas
     
     forUb.submit()
     forFechas.submit()

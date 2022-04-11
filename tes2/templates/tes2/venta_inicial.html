@@ -1,0 +1,86 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+{% block links %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% endblock links %}
+
+{% block content %}
+<div class="container" >
+    <div class="row">
+        <div class="col-4 brd">
+            <input type="hidden" value = "{{equipo.num_equipo}}" id="eq">
+            <img  class = "fit-vista"alt= "Imagen" src = "{{ imagen.imageURL }}">
+            <h1>{{equipo.que_es}} {{equipo.marca}} {{equipo.modelo}}</h1>
+            <hr>
+            <div class = "row center">
+                    <h3>Año: {{equipo.año}}</h3>
+            </div>
+            <div class="row center">
+                <div class="col-8"><h3>Precio de Venta:</h3></div>
+                <div class="col"><h4 id = "precio">$ {{equipo.precio_venta}}</h4></div>
+                
+                
+            </div>
+
+            <div class="row my-3">
+                <h4>{{equipo.descripcion}}</h4>
+            </div>
+        </div>
+        <div class="col-4 brd mx-1">
+            <h1>Dueño del Equipo</h1>
+            <h2>{{usuario.nombre}} {{usuario.apellido_1}} {{usuario.apellido_2}}</h2>
+            <h2>{{usuario.id_usuario}}</h2>
+            <hr>
+            <h1>Ubicación</h1>
+            <input type="hidden" value = "{{ equipo.donde_esta.coord_x}},{{ equipo.donde_esta.coord_y}}" id = "coords-eq">
+            <h3>{{equipo.donde_esta.municipio}}, {{equipo.donde_esta.estado}}</h3>
+            <hr>
+            <div>
+                <form class = "form" method = "POST" id = "forma-ub"> {% csrf_token %}
+                    <label for="op-ub" class ="btxt">Seleccione la ubicación de destino</label>
+                    <select id = "op-ub" required class = "form-control" name = "ubicacion">
+                        <option value selected>------------</option>
+                        {% for ub in op_ub %}
+                        <option>{{ub.alias}}</option>                        
+                        {% endfor %}
+                        {% for ub in op_ub %}
+                        <input type="hidden" value="{{ub.coord_x}},{{ub.coord_y}}" id = "{{ub.alias}}-crd">
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <div class = "detalles-ub brd my-4 mx-1 hidden">
+                <table id = "tabla-ub">
+                </table>
+            </div>
+        </div>
+        <div class="col-3 brd mx-1">
+            <h1>Cometario del Usuario</h1>
+            <form id="forma-fechas" method="post">{% csrf_token %}
+                <textarea id = "com" placeholder="Comentario para el Dueño del Equipo" rows="4" cols="38"  name="comentario"></textarea>
+                <input type="hidden" value id = "lugar" name= "ubicacion">
+                <input type="hidden" value = "{{equipo.precio_venta}}" id = "precio_venta" name= "costo">
+            </form>
+            <div class="detalles brd hidden my-2">
+                <table id = "tabla-d">
+                </table>
+            </div>
+            <div id= "comentario" class="hidden" >
+            </div>
+            <div class="btn-dos center">
+                <btn class = "btn btn-primary bot-sub">Enviar Solicitud</btn>
+                <h4>*Aún no se realizará un cobro</h4>
+            </div>
+        </div>
+    </div>
+    <div class="row center">
+        <h1>EL PRECIO MOSTRADO NO INCLUYE COSTOS DE TRANSPORTE</h1>
+    </div>
+</div>
+
+
+<script src = "{% static 'js/venta_inicial.js'%}" ></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6BgqA2oKejfHVnFodwFPmIDJZDIH6YeE" async defer></script>
+
+{% endblock content %}

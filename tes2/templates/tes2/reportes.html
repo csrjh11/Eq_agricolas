@@ -1,0 +1,123 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+{% block links%}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+crossorigin=""/>
+<link rel="stylesheet" href="{% static 'dist/MarkerCluster.css' %}">
+<link rel="stylesheet" href="{% static 'dist/MarkerCluster.Default.css' %}">
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+crossorigin=""></script>
+
+<script type="text/javascript" src="{% static 'dist/leaflet.markercluster.js' %}"></script>
+<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+
+{% endblock links %}
+
+{% block content %}
+<div class="container" id = "cont1">
+    <div class="row mx-4 my-2 center">
+        <h1>
+            Generador de Reportes de Mecanización
+        </h1>
+        <!-- <div class="col-3 center hh my-4">
+            <label for="seleccion">Elija un tipo de selección de área:</label>
+            <select name = "t_seleccion" id = "seleccion" class ="form-control">
+                <option value = "" class = "center">------------</option>
+                <option value = "m">Selección en Mapa</option>
+                <option value = "l">Selección por Estado/Municipio</option>
+            </select>
+        </div> -->
+    </div>
+    <div class=" mb-3 center">
+        <h2 >
+            Seleccione un área en el mapa para generar un reporte.
+        </h2>
+    </div>
+    <div class = "row map-container " id = "mapa">
+
+        <div id = "map">    </div>
+    </div>
+
+
+    <!-- <div class="row hidden" id  = "estados">
+        <h2>
+            Seleccione un estado.
+        </h2>
+        <div class="mb-3">
+            <label for="estado" >Estado</label>
+            <select name = "ubicacion_base__estado" id = "lista_estados" class ="form-control">
+                <option value = "">Todos</option>
+            </select>
+        </div>
+        <div class="hidden" id = "Municipios">
+
+        </div>
+        <div class="mb-3" id = "div-m">
+            <label for="municipio" id = "labelM">Municipio</label>
+            <select name = "ubicacion_base__municipio" id = "municipio" class ="form-control">
+            </select>
+        </div>
+    </div> -->
+</div>
+<div class="container my-3" >
+    <div class="row justify-content-between">
+        <div class="col-2" id = "reportesEst">
+            <a class = "btn btn-secondary" href="/genera_reporte_est">Ir a Reportes por Estado</a>
+        </div>
+        <div class="col-2">
+            <button class = "btn btn-primary hidden" id = "go">Generar Reporte</button>
+        </div>
+    </div>
+    <div class="row hidden">
+        <form id = "forma" method="post"> {%csrf_token%}
+            <input type="hidden" name="coords" id="valor_coords">
+            <input type="hidden" name="tipo" id="tipo">
+        </form>
+    </div>
+</div>
+
+{%if cu %}
+<input type="hidden" value = "{{cu}}" id = "total">
+<input type="hidden" value = "{{eq}}" id = "equipos">
+<input type="hidden" value = "{{coords}}" id = "coordenadas">
+<input type="hidden" value = "{{pot}}" id = "potencia">
+<input type="hidden" value = "{{trab}}" id = "hectareas">
+<div class="container my-3">
+    <div class="row justify-content-center">
+        <div class="col">
+            <canvas id="myChart" style="width:100%;"></canvas>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <h2 class = "center" id = "sup">
+
+        </h2>
+        <div class="col center my-3">
+            <h2 id = "im"></h2>
+        </div>
+        <div class="col center my-3">
+            <h2 id = "ip"></h2>
+        </div>
+    </div>
+    <div class="row der">
+        <a class = "btn btn-primary" href = "/genera_reporte">Nueva Consulta</a>
+    </div> 
+</div>
+{%endif%}
+
+
+
+
+<script defer type="text/javascript" src="{% static 'js/mapa_reportes.js' %}"></script>
+
+
+
+{% endblock content %}

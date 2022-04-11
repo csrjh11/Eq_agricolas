@@ -60,6 +60,7 @@
             <form id="forma-fechas" method="post">{% csrf_token %}
                 <input type="hidden" value id = "lugar" name= "ubicacion">
                 <input type="hidden" value id = "precio-total" name= "precio">
+                <input type = "hidden" value name = "hectareas_trabajar" id = "hectareas">
                 <input type="hidden" name="comentario" value id ="comentario-final">
                 <div class = "frm-fechas">
                     <div class="llegada center">
@@ -131,7 +132,11 @@
                 </table>
             </div>
             <div id= "comentario" class="hidden" >
+                <label for="hectareas-val">Aproximadamente, ¿Cuantas hectáreas se trabajarán?</label>
+                <input type = "number" id = "hectareas-val" class = "form-control" required>
+                <br>
                 <textarea id = "com" placeholder="Comentario para el Dueño del Equipo" rows="4" cols="38"></textarea>
+                
             </div>
             <div class="btn-dos center hidden">
                 <btn class = "btn btn-primary bot-sub">Enviar Solicitud</btn>

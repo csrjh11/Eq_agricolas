@@ -579,7 +579,7 @@ def vista_detalle_todos(request, num_eq):
     print(imagenes)
     context = {
         "equipo" : equipo[0],
-        "detalle": detalle,
+        "det": detalle,
         "imagenes": imagenes,
     }
     return render(request, "tes2/detalles_equipo_cliente.html", context)
@@ -725,6 +725,7 @@ def renta_inicial(request, num_eq):
         fecha_inicial = f"{fs[2]}-{fs[1]}-{fs[0]}"
         ft = d_post["f-final"].split("/")
         fecha_fin = f"{ft[2]}-{ft[1]}-{ft[0]}"
+        has = d_post["hectareas_trabajar"]
         a_dnd = Ubicacion.objects.filter(alias = d_post["ubicacion"]).filter(id_usuario = interesado)
         sol = Solicitud(
             id_solicitante      = interesado,
@@ -740,11 +741,46 @@ def renta_inicial(request, num_eq):
             costo               = precio,
             tipo_solicitud      = 1,
             comentario          = comenta,
-            quien_manda         = interesado,
+            hectareas_trabajar  = has,
+            quien_manda = interesado,
             )
         sol.save()
         return redirect("noti")
     return render(request, "tes2/renta_inicial.html", context)
+
+def venta_inicial(request, num_eq):
+    equipo = Equipo.objects.select_related("donde_esta").filter(num_equipo = num_eq)
+    imagen = Imagen.objects.get(id_equipo = equipo[0], es_principal = True)
+    usuario = Usuario.objects.get(id_usuario = equipo[0].id_dueño)
+    interesado = Usuario.objects.get(id_usuario = request.user)
+    ub_interesado = Ubicacion.objects.filter(id_usuario = interesado, eliminado= False)
+    context = {
+        "equipo": equipo[0],
+        "imagen":imagen,
+        "usuario":usuario,
+        "op_ub":ub_interesado,
+    }
+    if request.method == "POST":
+        d_post = request.POST.dict()
+        print(d_post)
+        a_dnd = Ubicacion.objects.filter(alias = d_post["ubicacion"]).filter(id_usuario = interesado)
+        cost = int(float(d_post["costo"]))
+        sol = Solicitud( comentario = d_post["comentario"],
+            costo               = cost,
+            id_solicitante      = interesado,
+            id_dueño_eq         = usuario,
+            id_equipo           = equipo[0],
+            tipo_operacion      = "venta",
+            a_donde             = a_dnd[0],
+            desde_donde         = equipo[0].ubicacion_base,
+            fecha_solicitud     = hoy,
+            estatus             = "1",
+            tipo_solicitud      = 1,
+            quien_manda         = interesado,
+            )
+        sol.save()
+        return redirect("noti")
+    return render(request, "tes2/venta_inicial.html", context)
 
 #Regresa un JSON con las fechas de las transacciones de un equipo
 def api_fechas(request,num_eq):
@@ -858,9 +894,13 @@ def lista_transacciones_usuario(request):
         raise PermissionDenied
     tr_mis_equipos_activos = Transaccion.objects.filter(estatus__in = "3,1").filter(id_dueño = el_usu).filter(fecha_final__gte = hoy).filter(tipo_transaccion = "renta")
     tr_yo_rento_activos = Transaccion.objects.filter(estatus__in = "3,1").filter(id_arrendatario = el_usu).filter(fecha_final__gte = hoy).filter(tipo_transaccion = "renta")
+    tr_mis_compras = Transaccion.objects.filter(estatus__in = "3,1").filter(id_dueño = el_usu).filter(fecha_final__gte = hoy).filter(tipo_transaccion = "venta")
+    tr_mis_ventas = Transaccion.objects.filter(estatus__in = "3,1").filter(id_dueño = el_usu).filter(fecha_final__gte = hoy).filter(tipo_transaccion = "venta")
     context = {
         "tr_mias" : tr_mis_equipos_activos,
         "tr_renta": tr_yo_rento_activos,
+        "tr_compras": tr_mis_compras,
+        "tr_ventas": tr_mis_ventas
     }
     print(tr_mis_equipos_activos)
     print(tr_yo_rento_activos)
@@ -868,6 +908,10 @@ def lista_transacciones_usuario(request):
         context["tr_mias"] = "nh"
     if tr_yo_rento_activos.count() == 0:
         context["tr_renta"] = "nh"
+    if tr_mis_compras.count() == 0:
+        context["tr_compras"] = "nh"
+    if tr_mis_ventas.count() == 0:
+        context["tr_ventas"] = "nh"
     return render(request, "tes2/transacciones_usuario.html", context)
 
 
@@ -1203,3 +1247,49 @@ def solicitudes_abiertas(request):
     }
     return render(request, "tes2/solicitudes_abiertas_lista.html",context)
 
+
+def reportes(request):
+    
+    usr = request.user
+    if not usr.is_superuser:
+        raise PermissionDenied
+    if request.method == "POST":
+        d_post = request.POST.dict()
+        tipo = d_post["tipo"]
+        arr =  request.POST.getlist("coords")[0].split(",")
+        if tipo == "rect":
+            ubis = []
+            trabajadas = 0
+            ub = Ubicacion.objects.all()
+            for lau in ub:
+                if float(lau.coord_x) >= float(arr[2]) and float(lau.coord_x) <= float(arr[0]) and float(lau.coord_y) >= float(arr[3]) and float(lau.coord_y) <= float(arr[1]):
+                    ubis.append(lau)
+                    trabajadas += lau.area
+            equipos = Equipo.objects.filter(ubicacion_base__in = ubis)            
+            cuantos = len(equipos)
+            lista_valores_eq = []
+            tractores = equipos.filter(tipo_equipo = "tractor")
+            potencia = 0
+            if len(tractores) > 0:
+                for tr in tractores:
+                    tracto =  Tractor.objects.get(id_equipo = tr)
+                    potencia += int(tracto.potencia)
+            else:
+                potencia ="na"
+            for key in dic_formas.keys():
+                lista_valores_eq.append(len(equipos.filter(tipo_equipo = key)))
+            context = {
+                "cu" : cuantos,
+                "eq": lista_valores_eq,
+                "coords": arr,
+                "pot": potencia,
+                "trab":trabajadas,
+            }
+            return render(request, "tes2/reportes.html", context)
+
+    return render(request, "tes2/reportes.html")
+
+
+    
+
+        

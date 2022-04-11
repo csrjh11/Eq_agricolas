@@ -1,0 +1,58 @@
+{% extends "tes2/main.html" %}
+{%load static%}
+{% block links%}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+crossorigin=""/>
+<link rel="stylesheet" href="{% static 'dist/MarkerCluster.css' %}">
+<link rel="stylesheet" href="{% static 'dist/MarkerCluster.Default.css' %}">
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+crossorigin=""></script>
+
+<script type="text/javascript" src="{% static 'dist/leaflet.markercluster.js' %}"></script>
+<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>  
+
+
+{% endblock links %}
+
+{% block content %}
+<div class="container">
+    <div class="row mx-4 my-2 center">
+        <h1>
+            Reporte de Mecanización
+        </h1>
+    </div>
+    <div class = "row map-container " id = "mapa">
+
+        <div id = "map">    </div>
+    </div>
+</div>
+<div class="container my-3">
+    <div class="row justify-content-between">
+        <div class="col-2">
+            <a class = "btn btn-secondary" href="/genera_reporte_est">Ir a Reportes por Estado</a>
+        </div>
+        <div class="col-2">
+            <button class = "btn btn-primary hidden" id = "go">Generar Reporte</button>
+        </div>
+    </div>
+
+    <div class="row hidden">
+        <form id = "forma" method="post"> {%csrf_token%}
+            <input type="hidden" name="coords" id="valor_coords">
+            <input type="hidden" name="tipo" id="tipo">
+        </form>
+    </div>
+</div>
+
+
+
+<script type="text/javascript" src="{% static 'js/reportes_respuesta.js' %}"></script>
+
+
+
+{% endblock content %}

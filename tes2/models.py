@@ -228,12 +228,12 @@ class Solicitud(models.Model):
     costo = models.IntegerField(blank=True,null =True)
     hectareas_trabajar = models.PositiveSmallIntegerField(blank=True,null = True)
     tipo_solicitud = models.PositiveSmallIntegerField(default= 1)
-    sol_respondida = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True,null = True)
-    quien_manda = models.ForeignKey(Usuario, on_delete=models.SET_NULL, related_name= "sol_remitente",blank=True, null = True)
-    # Tipo de solicitud
+        # Tipo de solicitud
         # 1 = "normal",
         # 2 = "solicitud sin equipo"
         # 3 = "solicitud respuesta"
+    sol_respondida = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True,null = True)
+    quien_manda = models.ForeignKey(Usuario, on_delete=models.SET_NULL, related_name= "sol_remitente",blank=True, null = True)
 
     @property
     def estatus_sol(self):
@@ -252,6 +252,7 @@ class Conversacion(models.Model):
     id_conversacion = models.AutoField(primary_key=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     id_transaccion = models.ForeignKey(Transaccion, on_delete=models.CASCADE, null = True, blank = True)
+    id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, null = True, blank = True)
     usuario_1 = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name= "usr_1_convo")
     usuario_2 = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name= "usr_2_convo")
 

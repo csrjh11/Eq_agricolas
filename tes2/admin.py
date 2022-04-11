@@ -7,7 +7,15 @@ from .models import(
     Transaccion,
     Ubicacion,
     Solicitud,
-    Mensaje
+    Mensaje,
+    Arado,
+    Rastra,
+    Sembradora,
+    Pulverizadora,
+    Cosechadora,
+
+
+
 )
 
 # Register your models here.
@@ -19,3 +27,8 @@ admin.site.register(Transaccion)
 admin.site.register(Ubicacion)
 admin.site.register(Solicitud)
 admin.site.register(Mensaje)
+admin.site.register(Arado)
+admin.site.register(Rastra)
+admin.site.register(Sembradora)
+admin.site.register(Pulverizadora)
+admin.site.register(Cosechadora)

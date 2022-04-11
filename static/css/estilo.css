@@ -22,7 +22,7 @@
 
 .hidden{
 	display: none;
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .map-container{
@@ -720,4 +720,8 @@ input[type="checkbox"]{
 
 .col-resp{
   background-color: rgb(194, 197, 204);
+}
+
+.hiddendos{
+  display: none;
 }

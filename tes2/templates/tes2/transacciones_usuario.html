@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container my-2">
-    <div class="row justify-content-start">
+    <div class="row justify-content-center">
         <div class = "col-2">
             <div class="card-header mb-0 center" id = "bo1">
                 <button class="btn" id = "uno">
@@ -91,25 +91,22 @@
             {% endif %}
         </div>
         <div class = "card-body hidden center" id = "txt-tres">
-            <p>No hay, es prueba</p>
-            <!-- {% if tr_renta == "nh"%}
-            <h1>No hay rentas de equipo activas</h1>
+            {% if tr_compras == "nh"%}
+            <h1>No ha comprado ningun equipo</h1>
             {%else%}
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th scope="col">Dueño</th>
+                    <th scope="col">Vendedor</th>
                     <th scope="col">Equipo</th>
-                    <th scope="col">Fechas</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody id = "num">
-                {% for trnsc in tr_renta %}
+                {% for trnsc in tr_compras %}
                 <tr>  
-                    <td>{{trnsc.id_dueño}}</td>
+                    <td>{{trnsc.id_arrendatario}}</td>
                     <td>{{trnsc.id_equipo}}</td>
-                    <td>{{trnsc.fecha_inicial|date:"d/m/Y"}} - {{trnsc.fecha_final|date:"d/m/Y"}}</td>
                     <td> 
                         <a class = "btn btn-outline-success" href="mis_tr/{{trnsc.id_transaccion}}">Más Información</a>
                     </td>
@@ -117,28 +114,25 @@
                 {% endfor %}
                 </tbody>
             </table>
-            {% endif %} -->
+            {% endif %}
         </div>
         <div class = "card-body hidden center" id = "txt-cuatro">
-            <p>No hay, es prueba</p>
-            <!-- {% if tr_renta == "nh"%}
-            <h1>No hay rentas de equipo activas</h1>
+            {% if tr_ventas == "nh"%}
+            <h1>No ha vendido ningun equipo</h1>
             {%else%}
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th scope="col">Dueño</th>
+                    <th scope="col">Comprador</th>
                     <th scope="col">Equipo</th>
-                    <th scope="col">Fechas</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody id = "num">
-                {% for trnsc in tr_renta %}
+                {% for trnsc in tr_ventas %}
                 <tr>  
-                    <td>{{trnsc.id_dueño}}</td>
+                    <td>{{trnsc.id_arrendatario}}</td>
                     <td>{{trnsc.id_equipo}}</td>
-                    <td>{{trnsc.fecha_inicial|date:"d/m/Y"}} - {{trnsc.fecha_final|date:"d/m/Y"}}</td>
                     <td> 
                         <a class = "btn btn-outline-success" href="mis_tr/{{trnsc.id_transaccion}}">Más Información</a>
                     </td>
@@ -146,7 +140,7 @@
                 {% endfor %}
                 </tbody>
             </table>
-            {% endif %} -->
+            {% endif %}
         </div>
     </div>
 </div>

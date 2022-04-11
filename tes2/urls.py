@@ -21,6 +21,7 @@ urlpatterns = [
     path("registro_ubicacion", views.registro_ubicacion, name = "reg_ubicacion"),
     path("registro/datos_int", views.datos_interesado, name ="datos-interesado"),
     path("renta/<num_eq>", views.renta_inicial, name = "renta"),
+    path("venta/<num_eq>", views.venta_inicial, name = "venta"),
     path("fechas_renta/<num_eq>",views.api_fechas, name = "API-fechas"),
     path("mis_solicitudes",views.solicitudes_usuario, name = "noti"),
     path("mis_solicitudes/<id_sol>",views.solicitudes_especificas, name = "noti-esp"),
@@ -39,4 +40,5 @@ urlpatterns = [
     path("browse_mapa", views.busqueda_mapa, name="busq-mapa"),
     path("solicitudes_abiertas/gen", views.solicitud_abierta_inicial),
     path("solicitudes_abiertas", views.solicitudes_abiertas),
+    path("genera_reporte", views.reportes),
 ]
